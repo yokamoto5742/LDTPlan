@@ -1,0 +1,76 @@
+using System.Diagnostics;
+using LDTPlan.Services;
+using LDTPlan.Utils;
+using static LDTPlan.Forms.UiFactory;
+
+namespace LDTPlan.Forms;
+
+/// <summary>バージョン情報表示とCSV出力・取込を行う設定ダイアログ</summary>
+public class SettingsDialog : Form
+{
+    private readonly Action _onDataImported;
+
+    public SettingsDialog(Action onDataImported)
+    {
+        _onDataImported = onDataImported;
+
+        Text = Constants.ButtonSettings;
+        ClientSize = new Size(360, 220);
+        StartPosition = FormStartPosition.CenterParent;
+        FormBorderStyle = FormBorderStyle.FixedDialog;
+        MinimizeBox = false;
+        MaximizeBox = false;
+
+        var versionLabel = new Label
+        {
+            Text = $"LDTPapp\nバージョン: {Constants.AppVersion}\n最終更新日: {Constants.AppLastUpdated}",
+            AutoSize = true,
+            Margin = new Padding(3, 3, 3, 12),
+        };
+
+        var layout = new FlowLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            FlowDirection = FlowDirection.TopDown,
+            WrapContents = false,
+            Padding = new Padding(15),
+        };
+        layout.Controls.Add(versionLabel);
+        layout.Controls.Add(CreateButton(Constants.ButtonCsvExport, ExportCsv));
+        layout.Controls.Add(CreateButton(Constants.ButtonCsvImport, ImportCsv));
+        layout.Controls.Add(CreateButton(Constants.ButtonClose, (_, _) => Close()));
+
+        Controls.Add(layout);
+    }
+
+    private void ExportCsv(object? sender, EventArgs e)
+    {
+        var (fileName, _, error) = DataExportService.ExportToCsv(AppConfig.ExportFolder);
+        if (error != null)
+        {
+            MessageBox.Show(this, string.Format(Constants.MsgCsvExportErrorFormat, error), Text);
+            return;
+        }
+
+        MessageBox.Show(this, string.Format(Constants.MsgCsvExportedFormat, fileName), Text);
+        Process.Start(new ProcessStartInfo(AppConfig.ExportFolder) { UseShellExecute = true });
+        Close();
+    }
+
+    private void ImportCsv(object? sender, EventArgs e)
+    {
+        using var dialog = new OpenFileDialog { Filter = "CSVファイル (*.csv)|*.csv" };
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+            return;
+
+        var error = DataExportService.ImportFromCsv(dialog.FileName);
+        if (error != null)
+        {
+            MessageBox.Show(this, error, Text);
+            return;
+        }
+
+        MessageBox.Show(this, Constants.MsgCsvImported, Text);
+        _onDataImported();
+    }
+}
