@@ -111,6 +111,7 @@ public class MainForm : Form
         _historyGrid.Columns.Add("doctor_name", Constants.ColumnDoctor);
         _historyGrid.Columns.Add("main_diagnosis", Constants.ColumnMainDiagnosis);
         _historyGrid.Columns.Add("sheet_name", Constants.ColumnSheetName);
+        _historyGrid.Columns.Add("creation_count", Constants.ColumnCreationCount);
         _historyGrid.CellClick += OnHistoryRowClicked;
     }
 
@@ -165,7 +166,8 @@ public class MainForm : Form
         foreach (var row in rows)
         {
             var index = _historyGrid.Rows.Add(
-                row.IssueDate, row.Department, row.DoctorName, row.MainDiagnosis, row.SheetName);
+                row.IssueDate, row.Department, row.DoctorName, row.MainDiagnosis, row.SheetName,
+                row.CreationCount?.ToString() ?? "");
             _historyGrid.Rows[index].Tag = row.Id;
         }
         _historyGrid.ClearSelection();
@@ -235,6 +237,7 @@ public class MainForm : Form
             DepartmentId = csvRecord.DepartmentId,
             MainDiagnosis = source.MainDiagnosis,
             SheetName = source.SheetName,
+            CreationCount = source.CreationCount + 1,
             TargetWeight = source.TargetWeight,
             TargetBp = source.TargetBp,
             TargetHba1c = source.TargetHba1c,

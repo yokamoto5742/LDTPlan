@@ -46,7 +46,7 @@ UI層     Forms/           WinFormsフォーム・イベントハンドラ
 
 ### サービス層 (`Services/`)
 
-- `TreatmentPlanGenerator.cs`: `CreatePlanFile()` がClosedXMLでテンプレート読込 → 共通情報シートへセル入力 → Code128バーコード画像を初回用・継続用シートに配置 → xlsm保存。`GeneratePlan()` は生成後にExcelで開く。初回用/継続用の切替は「同一患者の先行レコードの有無」で判定（作成回数機能は削除済み。B13セルは空欄のまま）。
+- `TreatmentPlanGenerator.cs`: `CreatePlanFile()` がClosedXMLでテンプレート読込 → 共通情報シートへセル入力 → Code128バーコード画像を初回用・継続用シートに配置 → xlsm保存。`GeneratePlan()` は生成後にExcelで開く。初回用/継続用の切替は作成回数（`CreationCount`）が1かどうかで判定し、B13セルに作成回数を出力する。
 - `PatientCsvService.cs`: pat.csv（Shift_JIS・ヘッダなし・先頭3行）から患者データ読込。
 - `PatientService.cs`: 主病名・シート名マスタ読込、計画書履歴取得。
 - `DataExportService.cs`: 患者情報のCSV出力/取込（Python版のエクスポート形式と互換）。
@@ -56,7 +56,7 @@ UI層     Forms/           WinFormsフォーム・イベントハンドラ
 
 - `Data/AppDbContext.cs`: EF Core DbContext。操作ごとに `using var db = new AppDbContext()` で生成する。
 - `Data/DbInitializer.cs`: 起動時に `EnsureCreated()` でテーブル作成、マスタ（主病名3件・シート名9件・テンプレート9件）を投入。
-- モデル: `PatientInfo`（46フィールド）・`MainDisease`・`SheetName`・`PlanTemplate`。テーブル名・列名は `[Table]`/`[Column]` 属性でPython版SQLite DBと互換（`creation_count` 列を除く）。
+- モデル: `PatientInfo`（47フィールド）・`MainDisease`・`SheetName`・`PlanTemplate`。テーブル名・列名は `[Table]`/`[Column]` 属性でPython版SQLite DBと互換。
 
 ### 設定 (`config.ini`)
 

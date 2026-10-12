@@ -25,6 +25,7 @@ public static class DataExportService
         ("department", p => p.Department, (p, v) => p.Department = v),
         ("department_id", p => p.DepartmentId, (p, v) => p.DepartmentId = ParseInt(v)),
         ("main_diagnosis", p => p.MainDiagnosis, (p, v) => p.MainDiagnosis = v),
+        ("creation_count", p => p.CreationCount, (p, v) => p.CreationCount = ParseInt(v)),
         ("target_weight", p => p.TargetWeight, (p, v) => p.TargetWeight = ParseDouble(v)),
         ("sheet_name", p => p.SheetName, (p, v) => p.SheetName = v),
         ("target_bp", p => p.TargetBp, (p, v) => p.TargetBp = v),

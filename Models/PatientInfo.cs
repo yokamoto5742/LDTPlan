@@ -19,6 +19,7 @@ public class PatientInfo
     [Column("department")] public string? Department { get; set; }
     [Column("department_id")] public int? DepartmentId { get; set; }
     [Column("main_diagnosis")] public string? MainDiagnosis { get; set; }
+    [Column("creation_count")] public int? CreationCount { get; set; }
     [Column("target_weight")] public double? TargetWeight { get; set; }
     [Column("sheet_name")] public string? SheetName { get; set; }
     [Column("target_bp")] public string? TargetBp { get; set; }

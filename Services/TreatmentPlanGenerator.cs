@@ -17,14 +17,14 @@ public static class TreatmentPlanGenerator
     private const string ContinuedPlanSheetName = "継続用";
 
     /// <summary>計画書を生成してExcelで開く</summary>
-    public static void GeneratePlan(PatientInfo patientInfo, bool isFirstPlan)
+    public static void GeneratePlan(PatientInfo patientInfo)
     {
-        var filePath = CreatePlanFile(patientInfo, isFirstPlan);
+        var filePath = CreatePlanFile(patientInfo);
         Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
     }
 
     /// <summary>計画書ファイルを生成して保存先パスを返す</summary>
-    public static string CreatePlanFile(PatientInfo patientInfo, bool isFirstPlan)
+    public static string CreatePlanFile(PatientInfo patientInfo)
     {
         var documentCode = BuildDocumentCode(patientInfo);
         var filePath = Path.Combine(AppConfig.OutputPath, $"{documentCode}.xlsm");
@@ -37,7 +37,7 @@ public static class TreatmentPlanGenerator
         AddBarcodeToSheet(workbook.Worksheet(FirstPlanSheetName), barcodeImage);
         AddBarcodeToSheet(workbook.Worksheet(ContinuedPlanSheetName), barcodeImage);
 
-        ActivateTargetSheet(workbook, isFirstPlan);
+        ActivateTargetSheet(workbook, patientInfo.CreationCount == 1);
 
         workbook.SaveAs(filePath);
         return filePath;
@@ -57,7 +57,7 @@ public static class TreatmentPlanGenerator
         SetCell(sheet, "B10", p.DepartmentId);
         SetCell(sheet, "B11", p.Department);
         SetCell(sheet, "B12", p.MainDiagnosis);
-        // B13は旧作成回数欄のため空欄のままにする
+        SetCell(sheet, "B13", p.CreationCount);
         SetCell(sheet, "B14", p.TargetWeight);
         SetCell(sheet, "B15", p.SheetName);
         SetCell(sheet, "B16", p.TargetBp);

@@ -38,6 +38,7 @@ public class PlanEditForm : Form
 
     private readonly ComboBox _cmbMainDiagnosis = CreateCombo(200, PatientService.LoadMainDiseases());
     private readonly ComboBox _cmbSheetName = CreateCombo(300, PatientService.LoadSheetNames());
+    private readonly TextBox _txtCreationCount = CreateTextBox(50);
     private readonly DateTimePicker _dtpIssueDate = new()
     {
         Format = DateTimePickerFormat.Custom,
@@ -88,6 +89,7 @@ public class PlanEditForm : Form
         switch (_mode)
         {
             case PlanFormMode.Create:
+                _txtCreationCount.Text = "1";
                 _dtpIssueDate.Value = DateTime.Today;
                 break;
             case PlanFormMode.Edit:
@@ -124,6 +126,9 @@ public class PlanEditForm : Form
             CreateLabel(Constants.LabelSheetName), _cmbSheetName);
         if (_mode != PlanFormMode.Template)
         {
+            headerRow.Controls.Add(CreateLabel(Constants.LabelCreationCount));
+            headerRow.Controls.Add(_txtCreationCount);
+            headerRow.Controls.Add(CreateLabel(Constants.LabelCreationCountSuffix));
             headerRow.Controls.Add(CreateLabel(Constants.LabelIssueDate));
             headerRow.Controls.Add(_dtpIssueDate);
         }
@@ -269,6 +274,7 @@ public class PlanEditForm : Form
         var mainDiseaseId = PatientService.FindMainDiseaseId(record.MainDiagnosis);
         ReplaceComboItems(_cmbSheetName, PatientService.LoadSheetNames(mainDiseaseId));
         SetComboValue(_cmbSheetName, record.SheetName);
+        _txtCreationCount.Text = record.CreationCount?.ToString() ?? "";
 
         if (record.IssueDate.HasValue)
             _dtpIssueDate.Value = record.IssueDate.Value;
@@ -330,9 +336,7 @@ public class PlanEditForm : Form
 
             if (print)
             {
-                var isFirstPlan = !db.PatientInfos.Any(
-                    p => p.PatientId == patientInfo.PatientId && p.Id < patientInfo.Id);
-                TreatmentPlanGenerator.GeneratePlan(patientInfo, isFirstPlan);
+                TreatmentPlanGenerator.GeneratePlan(patientInfo);
                 ShowInfo(Constants.MsgDataSavedAndPrinted);
             }
             else
@@ -384,9 +388,7 @@ public class PlanEditForm : Form
             ApplyFormToPatientInfo(record, includeBasicInfo: false);
             db.SaveChanges();
 
-            var isFirstPlan = !db.PatientInfos.Any(
-                p => p.PatientId == record.PatientId && p.Id < record.Id);
-            TreatmentPlanGenerator.GeneratePlan(record, isFirstPlan);
+            TreatmentPlanGenerator.GeneratePlan(record);
         }
         catch (Exception ex)
         {
@@ -502,6 +504,7 @@ public class PlanEditForm : Form
     {
         patientInfo.MainDiagnosis = GetComboValue(_cmbMainDiagnosis);
         patientInfo.SheetName = GetComboValue(_cmbSheetName);
+        patientInfo.CreationCount = ParseIntOrThrow(_txtCreationCount.Text, Constants.LabelCreationCount);
         patientInfo.IssueDate = _dtpIssueDate.Value.Date;
         patientInfo.IssueDateAge = patientInfo.Birthdate.HasValue
             ? DateUtils.CalculateIssueDateAge(patientInfo.Birthdate.Value, patientInfo.IssueDate.Value)

@@ -11,6 +11,7 @@ public class PatientHistoryRow
     public string DoctorName { get; init; } = "";
     public string MainDiagnosis { get; init; } = "";
     public string SheetName { get; init; } = "";
+    public int? CreationCount { get; init; }
 }
 
 public static class PatientService
@@ -51,7 +52,7 @@ public static class PatientService
         return db.PatientInfos
             .Where(p => p.PatientId == filterPatientId.Value)
             .OrderBy(p => p.PatientId).ThenByDescending(p => p.Id)
-            .Select(p => new { p.Id, p.IssueDate, p.Department, p.DoctorName, p.MainDiagnosis, p.SheetName })
+            .Select(p => new { p.Id, p.IssueDate, p.Department, p.DoctorName, p.MainDiagnosis, p.SheetName, p.CreationCount })
             .AsEnumerable()
             .Select(p => new PatientHistoryRow
             {
@@ -61,6 +62,7 @@ public static class PatientService
                 DoctorName = p.DoctorName ?? "",
                 MainDiagnosis = p.MainDiagnosis ?? "",
                 SheetName = p.SheetName ?? "",
+                CreationCount = p.CreationCount,
             })
             .ToList();
     }

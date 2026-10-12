@@ -3,8 +3,8 @@ namespace LDTPlan;
 /// <summary>UI表示文字列とドロップダウン選択肢の定数</summary>
 public static class Constants
 {
-    public const string AppVersion = "1.0.0";
-    public const string AppLastUpdated = "2026-07-12";
+    public const string AppVersion = "1.1.0";
+    public const string AppLastUpdated = "2026-10-12";
 
     // ウィンドウ・見出し
     public const string AppTitle = "生活習慣病療養計画書アプリ";
@@ -45,6 +45,8 @@ public static class Constants
     public const string LabelDepartment = "診療科";
     public const string LabelMainDiagnosis = "主病名";
     public const string LabelSheetName = "シート名";
+    public const string LabelCreationCount = "作成回数";
+    public const string LabelCreationCountSuffix = "回目";
     public const string LabelGoal1 = "①達成目標：患者と相談した目標";
     public const string LabelGoal2 = "②行動目標：患者と相談した目標";
     public const string LabelTargetAchievement = "目標達成状況(2回目以降)";
@@ -76,6 +78,7 @@ public static class Constants
     public const string ColumnDoctor = "医師";
     public const string ColumnMainDiagnosis = "主病名";
     public const string ColumnSheetName = "シート名";
+    public const string ColumnCreationCount = "回数";
 
     // メッセージ
     public const string MsgWindowTooSmall = "ウィンドウサイズが小さすぎます。幅を1000ピクセル以上にしてください。";
