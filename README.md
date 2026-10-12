@@ -40,7 +40,7 @@ C#（WinForms / .NET 10）で実装されています。旧Python/Flet版のソ�
 ## 動作環境
 
 - Windows 10 64bit 以上
-- .NET 10 SDK（ビルド時。配布はビルド済みexeで可）
+- .NET 10 SDK（ビルド時。配布はビルド済みexeで可。ランタイムはexeに同梱されるため配布先へのインストールは不要）
 - メモリ 4GB 以上推奨
 
 ## インストール方法
@@ -63,7 +63,7 @@ C#（WinForms / .NET 10）で実装されています。旧Python/Flet版のソ�
    ```bash
    dotnet publish LDTPlan.csproj -c Release
    ```
-   出力先の `LDTPlan.exe` と `config.ini` を配布します（config.iniはexeと同じディレクトリに置く）。
+   出力先の `LDTPlan.exe`・`e_sqlite3.dll`・`config.ini` を配布します（3ファイルとも同じディレクトリに置く）。発行時にこの3ファイルは `C:\Shinseikai\LDTPlan` へ自動コピーされます。
 
 ## 使い方
 
