@@ -12,6 +12,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include=".claude\agents\changelog-updater.md" />
+    <None Include=".claude\agents\japanese-comment-reviewer.md" />
+    <None Include=".claude\agents\pyright-type-checker.md" />
+    <None Include=".claude\agents\pytest-test-creator.md" />
+    <None Include=".claude\agents\readme-generator.md" />
+    <None Include=".claude\hooks\permission-request-notification.ps1" />
+    <None Include=".claude\hooks\stop-notification.ps1" />
+    <None Include=".claude\rules\coding-guidelines.md" />
+    <None Include=".claude\rules\commit.md" />
+    <None Include=".claude\rules\database.md" />
+    <None Include=".claude\rules\python-coding.md" />
+    <None Include=".claude\rules\response-style.md" />
+    <None Include=".claude\rules\testing.md" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.*" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.*" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.*" />
