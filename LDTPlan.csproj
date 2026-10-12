@@ -21,10 +21,7 @@
     <None Include=".claude\hooks\stop-notification.ps1" />
     <None Include=".claude\rules\coding-guidelines.md" />
     <None Include=".claude\rules\commit.md" />
-    <None Include=".claude\rules\database.md" />
-    <None Include=".claude\rules\python-coding.md" />
     <None Include=".claude\rules\response-style.md" />
-    <None Include=".claude\rules\testing.md" />
   </ItemGroup>
 
   <ItemGroup>
