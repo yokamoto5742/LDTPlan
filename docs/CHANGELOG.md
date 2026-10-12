@@ -2,6 +2,12 @@
 
 このファイルは [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) の形式に従い、バージョン番号は [セマンティック バージョニング](https://semver.org/lang/ja/) に準拠する。
 
+## [1.1.3] - 2026-10-12
+
+### 追加
+
+- 発行（`dotnet publish`）時に `LDTPlan.exe`・`e_sqlite3.dll`・`config.ini` を `C:\Shinseikai\LDTPlan` へ自動コピーする処理を追加
+
 ## [1.1.2] - 2026-10-12
 
 ### 変更
