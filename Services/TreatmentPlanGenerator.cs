@@ -2,10 +2,12 @@ using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Packaging;
 using LDTPlan.Models;
 using LDTPlan.Utils;
 using ZXing;
 using ZXing.Common;
+using Spreadsheet = DocumentFormat.OpenXml.Spreadsheet;
 
 namespace LDTPlan.Services;
 
@@ -40,7 +42,37 @@ public static class TreatmentPlanGenerator
         ActivateTargetSheet(workbook, patientInfo.CreationCount == 1);
 
         workbook.SaveAs(filePath);
+        RestoreLegacyDrawings(AppConfig.TemplatePath, filePath);
         return filePath;
+    }
+
+    /// <summary>ClosedXMLが保存時に破棄するフォームコントロールのVML描画（ボタンの表示文字）をテンプレートから復元する</summary>
+    private static void RestoreLegacyDrawings(string templatePath, string filePath)
+    {
+        using var template = SpreadsheetDocument.Open(templatePath, false);
+        using var output = SpreadsheetDocument.Open(filePath, true);
+        var outputSheets = output.WorkbookPart!.Workbook.Sheets!.Elements<Spreadsheet.Sheet>().ToList();
+
+        foreach (var templateSheet in template.WorkbookPart!.Workbook.Sheets!.Elements<Spreadsheet.Sheet>())
+        {
+            var templatePart = (WorksheetPart)template.WorkbookPart.GetPartById(templateSheet.Id!.Value!);
+            var templateVml = templatePart.VmlDrawingParts.FirstOrDefault();
+            if (templateVml == null)
+                continue;
+
+            var outputSheet = outputSheets.First(s => s.Name?.Value == templateSheet.Name?.Value);
+            var outputPart = (WorksheetPart)output.WorkbookPart.GetPartById(outputSheet.Id!.Value!);
+            var drawing = outputPart.Worksheet.GetFirstChild<Spreadsheet.Drawing>();
+            if (drawing == null || outputPart.Worksheet.GetFirstChild<Spreadsheet.LegacyDrawing>() != null)
+                continue;
+
+            var outputVml = outputPart.AddNewPart<VmlDrawingPart>();
+            using (var vmlStream = templateVml.GetStream())
+                outputVml.FeedData(vmlStream);
+
+            // legacyDrawing は drawing の直後に置く必要がある
+            drawing.InsertAfterSelf(new Spreadsheet.LegacyDrawing { Id = outputPart.GetIdOfPart(outputVml) });
+        }
     }
 
     /// <summary>共通情報シートに患者情報を書き込む</summary>
