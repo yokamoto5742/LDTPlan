@@ -3,8 +3,8 @@ namespace LDTPlan;
 /// <summary>UI表示文字列とドロップダウン選択肢の定数</summary>
 public static class Constants
 {
-    public const string AppVersion = "1.1.7";
-    public const string AppLastUpdated = "2026-10-12";
+    public const string AppVersion = "1.1.8";
+    public const string AppLastUpdated = "2026-10-13";
 
     // ウィンドウ・見出し
     public const string AppTitle = "生活習慣病療養計画書アプリ";
@@ -88,6 +88,8 @@ public static class Constants
     public const string MsgDataSaved = "データが保存されました";
     public const string MsgDataCopied = "データがコピーされました";
     public const string MsgDataSavedAndPrinted = "データを保存して計画書を作成しました";
+    public const string MsgSavedButPlanFailedFormat =
+        "データは保存されましたが、計画書を作成できませんでした。編集画面の「印刷」から作成し直してください。\n{0}";
     public const string MsgTemplateSaved = "テンプレートが保存されました";
     public const string MsgNoDataSelected = "削除するデータが選択されていません";
     public const string MsgManualPathError = "操作マニュアルのパスを確認してください";

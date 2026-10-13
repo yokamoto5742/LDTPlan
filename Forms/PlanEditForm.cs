@@ -326,30 +326,40 @@ public class PlanEditForm : Form
         if (!CheckRequiredFields())
             return;
 
+        PatientInfo patientInfo;
         try
         {
-            var patientInfo = CreatePatientInfoFromCsv();
+            patientInfo = CreatePatientInfoFromCsv();
 
             using var db = new AppDbContext();
             db.PatientInfos.Add(patientInfo);
             db.SaveChanges();
-
-            if (print)
-            {
-                TreatmentPlanGenerator.GeneratePlan(patientInfo);
-                ShowInfo(Constants.MsgDataSavedAndPrinted);
-            }
-            else
-            {
-                ShowInfo(Constants.MsgDataSaved);
-            }
-
-            Close();
         }
         catch (Exception ex)
         {
             ShowError(ex.Message);
+            return;
         }
+
+        // 保存後は計画書の生成に失敗しても画面を閉じる（再実行で同じ計画書が二重に登録されるのを防ぐ）
+        if (print)
+        {
+            try
+            {
+                TreatmentPlanGenerator.GeneratePlan(patientInfo);
+                ShowInfo(Constants.MsgDataSavedAndPrinted);
+            }
+            catch (Exception ex)
+            {
+                ShowError(string.Format(Constants.MsgSavedButPlanFailedFormat, ex.Message));
+            }
+        }
+        else
+        {
+            ShowInfo(Constants.MsgDataSaved);
+        }
+
+        Close();
     }
 
     /// <summary>編集内容を保存</summary>
@@ -371,7 +381,7 @@ public class PlanEditForm : Form
         }
         catch (Exception ex)
         {
-            ShowError(string.Format(Constants.MsgInvalidInputFormat, ex.Message));
+            ShowError(ex.Message);
         }
     }
 
@@ -511,7 +521,7 @@ public class PlanEditForm : Form
             : null;
         patientInfo.TargetWeight = _txtTargetWeight.Text == ""
             ? null
-            : double.Parse(_txtTargetWeight.Text, CultureInfo.InvariantCulture);
+            : ParseDoubleOrThrow(_txtTargetWeight.Text, Constants.LabelTargetWeight);
         patientInfo.TargetBp = _txtTargetBp.Text;
         patientInfo.TargetHba1c = _txtTargetHba1c.Text;
         patientInfo.Goal1 = _txtGoal1.Text;
@@ -539,6 +549,11 @@ public class PlanEditForm : Form
 
     private static int ParseIntOrThrow(string value, string fieldLabel)
         => int.TryParse(value, out var v)
+            ? v
+            : throw new InvalidOperationException(string.Format(Constants.MsgInvalidInputFormat, fieldLabel));
+
+    private static double ParseDoubleOrThrow(string value, string fieldLabel)
+        => double.TryParse(value, CultureInfo.InvariantCulture, out var v)
             ? v
             : throw new InvalidOperationException(string.Format(Constants.MsgInvalidInputFormat, fieldLabel));
 
