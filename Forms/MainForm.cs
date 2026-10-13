@@ -246,6 +246,11 @@ public class MainForm : Form
             ShowStatus(Constants.MsgWindowTooSmall);
     }
 
+    private void InitializeComponent()
+    {
+
+    }
+
     private void ShowStatus(string message)
     {
         _statusLabel.Text = message;
