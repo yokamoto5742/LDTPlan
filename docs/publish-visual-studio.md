@@ -19,6 +19,8 @@
 | ターゲット ランタイム | win-x64 |
 | ファイルの公開オプション | 「単一ファイルの作成」「ReadyToRun コンパイルを有効にする」にチェック |
 
+「ファイルの公開オプション」の2つのチェックボックスは、チェックが入ったままグレーアウトして変更できない状態で表示される。`LDTPlan.csproj` で `PublishSingleFile` と `PublishReadyToRun` を `true` に固定しているためで、そのままでよい。
+
 5. **発行** ボタンを押す
 
 設定は `Properties\PublishProfiles\FolderProfile.pubxml` に保存される。
