@@ -2,6 +2,12 @@
 
 このファイルは [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) の形式に従い、バージョン番号は [セマンティック バージョニング](https://semver.org/lang/ja/) に準拠する。
 
+## [1.1.13] - 2026-10-13
+
+### 変更
+
+- NuGet パッケージのバージョンを、ワイルドカード指定から現在使用しているバージョンへの固定に変更（ClosedXML 0.105.1・Microsoft.EntityFrameworkCore.Sqlite 10.0.12・SQLitePCLRaw.bundle_e_sqlite3 3.0.5・ZXing.Net 0.16.11。ビルドした時期によって入るバージョンが変わり、数年後の再ビルドで動作が変わるおそれがあったため。更新するときは `LDTPlan.csproj` の番号を書き換える）
+
 ## [1.1.12] - 2026-10-13
 
 ### 追加
