@@ -21,10 +21,8 @@ public sealed class DataExportServiceTests : IDisposable
             db.SaveChanges();
         }
 
-        var (fileName, _, error) = DataExportService.ExportToCsv(_env.ExportFolder);
-        Assert.Null(error);
-        var importError = DataExportService.ImportFromCsv(Path.Combine(_env.ExportFolder, fileName!));
-        Assert.Null(importError);
+        var fileName = DataExportService.ExportToCsv(_env.ExportFolder);
+        DataExportService.ImportFromCsv(Path.Combine(_env.ExportFolder, fileName));
 
         using var verify = new AppDbContext();
         var rows = verify.PatientInfos.OrderBy(p => p.Id).ToList();
@@ -44,10 +42,31 @@ public sealed class DataExportServiceTests : IDisposable
         var path = Path.Combine(_env.Root, "other.csv");
         File.WriteAllText(path, "id,patient_id\n1,123\n");
 
-        var error = DataExportService.ImportFromCsv(path);
+        var ex = Assert.Throws<InvalidOperationException>(() => DataExportService.ImportFromCsv(path));
 
-        Assert.Equal(Constants.MsgCsvImportInvalidFile, error);
+        Assert.Equal(Constants.MsgCsvImportInvalidFile, ex.Message);
         using var db = new AppDbContext();
         Assert.Empty(db.PatientInfos);
+    }
+
+    [Fact]
+    public void 値が不正な行があれば例外を投げて1件も取り込まない()
+    {
+        var path = Path.Combine(_env.Root, "patient_info_broken.csv");
+        File.WriteAllText(path, "id,patient_id\n1,123\n2,abc\n");
+
+        Assert.Throws<FormatException>(() => DataExportService.ImportFromCsv(path));
+
+        using var db = new AppDbContext();
+        Assert.Empty(db.PatientInfos);
+    }
+
+    [Fact]
+    public void 出力先フォルダを作成できない場合は例外を投げる()
+    {
+        var blocked = Path.Combine(_env.Root, "blocked");
+        File.WriteAllText(blocked, ""); // 同名のファイルがあるとフォルダを作成できない
+
+        Assert.Throws<IOException>(() => DataExportService.ExportToCsv(blocked));
     }
 }

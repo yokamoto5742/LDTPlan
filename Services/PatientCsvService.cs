@@ -25,39 +25,32 @@ public static class PatientCsvService
     private const int MaxRows = 3;
 
     /// <summary>患者CSVデータ読み込み（Shift_JIS・ヘッダなし・先頭3行のみ）</summary>
-    public static (string ErrorMessage, List<PatientCsvRecord>? Records) LoadPatientData()
+    public static List<PatientCsvRecord> LoadPatientData()
     {
-        try
-        {
-            var encoding = Encoding.GetEncoding("shift_jis");
-            var records = new List<PatientCsvRecord>();
+        var encoding = Encoding.GetEncoding("shift_jis");
+        var records = new List<PatientCsvRecord>();
 
-            foreach (var line in File.ReadLines(AppConfig.PatientDataPath, encoding).Take(MaxRows))
+        foreach (var line in File.ReadLines(AppConfig.PatientDataPath, encoding).Take(MaxRows))
+        {
+            var f = SplitCsvLine(line);
+            if (f.Count < 15)
+                continue;
+
+            records.Add(new PatientCsvRecord
             {
-                var f = SplitCsvLine(line);
-                if (f.Count < 15)
-                    continue;
-
-                records.Add(new PatientCsvRecord
-                {
-                    PatientId = ParseInt(f[2]),
-                    Name = f[3],
-                    Kana = f[4],
-                    GenderCode = ParseInt(f[5]),
-                    Birthdate = ParseDate(f[6]),
-                    DoctorId = ParseInt(f[9]),
-                    DoctorName = f[10],
-                    DepartmentId = ParseInt(f[13]),
-                    Department = f[14],
-                });
-            }
-
-            return ("", records);
+                PatientId = ParseInt(f[2]),
+                Name = f[3],
+                Kana = f[4],
+                GenderCode = ParseInt(f[5]),
+                Birthdate = ParseDate(f[6]),
+                DoctorId = ParseInt(f[9]),
+                DoctorName = f[10],
+                DepartmentId = ParseInt(f[13]),
+                Department = f[14],
+            });
         }
-        catch (Exception e)
-        {
-            return ($"エラー: {e.Message}", null);
-        }
+
+        return records;
     }
 
     private static int ParseInt(string value)

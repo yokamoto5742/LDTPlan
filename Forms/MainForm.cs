@@ -128,8 +128,15 @@ public class MainForm : Form
 
     private void Initialize()
     {
-        var (_, records) = PatientCsvService.LoadPatientData();
-        _csvPatients = records ?? [];
+        try
+        {
+            _csvPatients = PatientCsvService.LoadPatientData();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, string.Format(Constants.MsgPatientCsvLoadErrorFormat, ex.Message),
+                Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
 
         _fileMonitor = new FileMonitorService(this);
 

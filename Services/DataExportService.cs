@@ -53,80 +53,65 @@ public static class DataExportService
         ("cancer_screening", p => p.CancerScreening, (p, v) => p.CancerScreening = ParseBool(v)),
     ];
 
-    /// <summary>CSV出力。成功時は (ファイル名, パス, null)、失敗時は (null, null, エラー)</summary>
-    public static (string? FileName, string? FilePath, string? Error) ExportToCsv(string exportFolder)
+    /// <summary>CSV出力。出力したファイル名を返す</summary>
+    public static string ExportToCsv(string exportFolder)
     {
         var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
         var fileName = $"patient_info_export_{timestamp}.csv";
         var filePath = Path.Combine(exportFolder, fileName);
 
-        try
+        Directory.CreateDirectory(exportFolder);
+
+        using var db = new AppDbContext();
+        var patients = db.PatientInfos.ToList();
+
+        var encoding = Encoding.GetEncoding(
+            "shift_jis", new EncoderReplacementFallback(""), DecoderFallback.ReplacementFallback);
+        using var writer = new StreamWriter(filePath, false, encoding);
+
+        writer.WriteLine(string.Join(",", new[] { "id" }.Concat(Columns.Select(c => c.Name))));
+        foreach (var p in patients)
         {
-            Directory.CreateDirectory(exportFolder);
-
-            using var db = new AppDbContext();
-            var patients = db.PatientInfos.ToList();
-
-            var encoding = Encoding.GetEncoding(
-                "shift_jis", new EncoderReplacementFallback(""), DecoderFallback.ReplacementFallback);
-            using var writer = new StreamWriter(filePath, false, encoding);
-
-            writer.WriteLine(string.Join(",", new[] { "id" }.Concat(Columns.Select(c => c.Name))));
-            foreach (var p in patients)
-            {
-                var values = new List<string> { p.Id.ToString() };
-                values.AddRange(Columns.Select(c => FormatValue(c.Get(p))));
-                writer.WriteLine(string.Join(",", values.Select(EscapeCsv)));
-            }
-
-            return (fileName, filePath, null);
+            var values = new List<string> { p.Id.ToString() };
+            values.AddRange(Columns.Select(c => FormatValue(c.Get(p))));
+            writer.WriteLine(string.Join(",", values.Select(EscapeCsv)));
         }
-        catch (Exception e)
-        {
-            return (null, null, e.Message);
-        }
+
+        return fileName;
     }
 
-    /// <summary>CSV取込。成功時は null、失敗時はエラーメッセージを返す</summary>
-    public static string? ImportFromCsv(string filePath)
+    /// <summary>CSV取込。取り込めないファイルは例外を投げる（1行でも失敗すれば全体を取り込まない）</summary>
+    public static void ImportFromCsv(string filePath)
     {
         var fileName = Path.GetFileName(filePath);
         if (!Regex.IsMatch(fileName, @"^patient_info_.*\.csv$"))
-            return Constants.MsgCsvImportInvalidFile;
+            throw new InvalidOperationException(Constants.MsgCsvImportInvalidFile);
 
-        try
+        var encoding = Encoding.GetEncoding("shift_jis");
+        var lines = File.ReadAllLines(filePath, encoding);
+        if (lines.Length == 0)
+            return;
+
+        var header = PatientCsvService.SplitCsvLine(lines[0]);
+        using var db = new AppDbContext();
+
+        foreach (var line in lines.Skip(1))
         {
-            var encoding = Encoding.GetEncoding("shift_jis");
-            var lines = File.ReadAllLines(filePath, encoding);
-            if (lines.Length == 0)
-                return null;
+            if (line.Trim().Length == 0)
+                continue;
 
-            var header = PatientCsvService.SplitCsvLine(lines[0]);
-            using var db = new AppDbContext();
-
-            foreach (var line in lines.Skip(1))
+            var values = PatientCsvService.SplitCsvLine(line);
+            var patient = new PatientInfo();
+            foreach (var column in Columns)
             {
-                if (line.Trim().Length == 0)
-                    continue;
-
-                var values = PatientCsvService.SplitCsvLine(line);
-                var patient = new PatientInfo();
-                foreach (var column in Columns)
-                {
-                    var index = header.IndexOf(column.Name);
-                    if (index >= 0 && index < values.Count)
-                        column.Set(patient, values[index]);
-                }
-                db.PatientInfos.Add(patient);
+                var index = header.IndexOf(column.Name);
+                if (index >= 0 && index < values.Count)
+                    column.Set(patient, values[index]);
             }
+            db.PatientInfos.Add(patient);
+        }
 
-            db.SaveChanges();
-            return null;
-        }
-        catch (Exception e)
-        {
-            return string.Format(Constants.MsgCsvImportErrorFormat, e.Message);
-        }
+        db.SaveChanges();
     }
 
     private static string FormatValue(object? value) => value switch

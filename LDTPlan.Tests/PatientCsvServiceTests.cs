@@ -16,9 +16,8 @@ public sealed class PatientCsvServiceTests : IDisposable
     {
         _env.WritePatientCsv(Line1, Line2);
 
-        var (_, records) = PatientCsvService.LoadPatientData();
+        var records = PatientCsvService.LoadPatientData();
 
-        Assert.NotNull(records);
         Assert.Equal(2, records.Count);
         var first = records[0];
         Assert.Equal(123, first.PatientId);
@@ -39,9 +38,9 @@ public sealed class PatientCsvServiceTests : IDisposable
     {
         _env.WritePatientCsv(Line1, Line2, Line1, Line2);
 
-        var (_, records) = PatientCsvService.LoadPatientData();
+        var records = PatientCsvService.LoadPatientData();
 
-        Assert.Equal(3, records!.Count);
+        Assert.Equal(3, records.Count);
     }
 
     [Fact]
@@ -49,9 +48,15 @@ public sealed class PatientCsvServiceTests : IDisposable
     {
         _env.WritePatientCsv("x,x,999,列不足", Line1);
 
-        var (_, records) = PatientCsvService.LoadPatientData();
+        var records = PatientCsvService.LoadPatientData();
 
-        Assert.Equal(123, Assert.Single(records!).PatientId);
+        Assert.Equal(123, Assert.Single(records).PatientId);
+    }
+
+    [Fact]
+    public void 患者CSVがない場合は例外を投げる()
+    {
+        Assert.Throws<FileNotFoundException>(() => PatientCsvService.LoadPatientData());
     }
 
     [Theory]

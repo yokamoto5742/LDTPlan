@@ -45,10 +45,14 @@ public class SettingsDialog : Form
 
     private void ExportCsv(object? sender, EventArgs e)
     {
-        var (fileName, _, error) = DataExportService.ExportToCsv(AppConfig.ExportFolder);
-        if (error != null)
+        string fileName;
+        try
         {
-            MessageBox.Show(this, string.Format(Constants.MsgCsvExportErrorFormat, error), Text);
+            fileName = DataExportService.ExportToCsv(AppConfig.ExportFolder);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, string.Format(Constants.MsgCsvExportErrorFormat, ex.Message), Text);
             return;
         }
 
@@ -63,10 +67,13 @@ public class SettingsDialog : Form
         if (dialog.ShowDialog(this) != DialogResult.OK)
             return;
 
-        var error = DataExportService.ImportFromCsv(dialog.FileName);
-        if (error != null)
+        try
         {
-            MessageBox.Show(this, error, Text);
+            DataExportService.ImportFromCsv(dialog.FileName);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(this, string.Format(Constants.MsgCsvImportErrorFormat, ex.Message), Text);
             return;
         }
 
