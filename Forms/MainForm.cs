@@ -248,6 +248,15 @@ public class MainForm : Form
 
     private void InitializeComponent()
     {
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+        SuspendLayout();
+        // 
+        // MainForm
+        // 
+        ClientSize = new Size(282, 256);
+        Icon = (Icon)resources.GetObject("$this.Icon");
+        Name = "MainForm";
+        ResumeLayout(false);
 
     }
 
