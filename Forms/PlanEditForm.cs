@@ -133,7 +133,8 @@ public class PlanEditForm : Form
             CreateLabel(Constants.LabelTargetHba1c), _txtTargetHba1c, CreateLabel("%")));
         layout.Controls.Add(CreateRow(
             CreateLabel(Constants.LabelDiet1), _cmbDiet1,
-            CreateLabel(Constants.LabelDiet2), _cmbDiet2,
+            CreateLabel(Constants.LabelDiet2), _cmbDiet2));
+        layout.Controls.Add(CreateRow(
             CreateLabel(Constants.LabelDiet3), _cmbDiet3,
             CreateLabel(Constants.LabelDiet4), _cmbDiet4));
         layout.Controls.Add(CreateRow(CreateLabel(Constants.LabelDietComment), _txtDietComment));
