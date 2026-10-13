@@ -110,7 +110,7 @@ public class MainForm : Form
         _historyGrid.RowHeadersVisible = false;
         _historyGrid.MultiSelect = false;
         _historyGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        _historyGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        _historyGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         _historyGrid.Columns.Add("issue_date", Constants.ColumnIssueDate);
         _historyGrid.Columns.Add("department", Constants.ColumnDepartment);
         _historyGrid.Columns.Add("doctor_name", Constants.ColumnDoctor);

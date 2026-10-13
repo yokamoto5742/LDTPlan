@@ -22,33 +22,34 @@ public class PlanEditForm : Form
     private readonly PatientCsvRecord? _patient;
     private readonly int? _recordId;
 
-    private readonly ComboBox _cmbMainDiagnosis = CreateCombo(200, PatientService.LoadMainDiseases());
-    private readonly ComboBox _cmbSheetName = CreateCombo(300, PatientService.LoadSheetNames());
+    private readonly ComboBox _cmbMainDiagnosis = CreateCombo(PatientService.LoadMainDiseases());
+    private readonly ComboBox _cmbSheetName = CreateCombo(PatientService.LoadSheetNames());
     private readonly TextBox _txtCreationCount = CreateTextBox(50);
     private readonly DateTimePicker _dtpIssueDate = new()
     {
         Format = DateTimePickerFormat.Custom,
         CustomFormat = "yyyy/MM/dd",
         Width = 130,
-        Margin = new Padding(3, 6, 3, 3),
+        Anchor = AnchorStyles.Left,
+        Margin = new Padding(3, 4, 3, 4),
     };
 
     private readonly TextBox _txtGoal1 = CreateTextBox(700);
     private readonly TextBox _txtGoal2 = CreateTextBox(700);
-    private readonly ComboBox _cmbTargetAchievement = CreateCombo(220, Constants.TargetAchievementItems);
+    private readonly ComboBox _cmbTargetAchievement = CreateCombo(Constants.TargetAchievementItems);
     private readonly TextBox _txtTargetWeight = CreateTextBox(80);
     private readonly TextBox _txtTargetBp = CreateTextBox(100);
     private readonly TextBox _txtTargetHba1c = CreateTextBox(80);
-    private readonly ComboBox _cmbDiet1 = CreateCombo(230, Constants.DietItems);
-    private readonly ComboBox _cmbDiet2 = CreateCombo(230, Constants.DietItems);
-    private readonly ComboBox _cmbDiet3 = CreateCombo(230, Constants.DietItems);
-    private readonly ComboBox _cmbDiet4 = CreateCombo(230, Constants.DietItems);
+    private readonly ComboBox _cmbDiet1 = CreateCombo(Constants.DietItems);
+    private readonly ComboBox _cmbDiet2 = CreateCombo(Constants.DietItems);
+    private readonly ComboBox _cmbDiet3 = CreateCombo(Constants.DietItems);
+    private readonly ComboBox _cmbDiet4 = CreateCombo(Constants.DietItems);
     private readonly TextBox _txtDietComment = CreateTextBox(700);
-    private readonly ComboBox _cmbExercisePrescription = CreateCombo(180, Constants.ExercisePrescriptionItems);
-    private readonly ComboBox _cmbExerciseTime = CreateCombo(100, Constants.ExerciseTimeItems);
-    private readonly ComboBox _cmbExerciseFrequency = CreateCombo(100, Constants.ExerciseFrequencyItems);
-    private readonly ComboBox _cmbExerciseIntensity = CreateCombo(150, Constants.ExerciseIntensityItems);
-    private readonly ComboBox _cmbDailyActivity = CreateCombo(190, Constants.DailyActivityItems);
+    private readonly ComboBox _cmbExercisePrescription = CreateCombo(Constants.ExercisePrescriptionItems);
+    private readonly ComboBox _cmbExerciseTime = CreateCombo(Constants.ExerciseTimeItems);
+    private readonly ComboBox _cmbExerciseFrequency = CreateCombo(Constants.ExerciseFrequencyItems);
+    private readonly ComboBox _cmbExerciseIntensity = CreateCombo(Constants.ExerciseIntensityItems);
+    private readonly ComboBox _cmbDailyActivity = CreateCombo(Constants.DailyActivityItems);
     private readonly TextBox _txtExerciseComment = CreateTextBox(700);
     private readonly CheckBox _chkNonsmoker = CreateCheckBox(Constants.LabelNonsmoker);
     private readonly CheckBox _chkSmokingCessation = CreateCheckBox(Constants.LabelSmokingCessation);

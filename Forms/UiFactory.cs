@@ -8,25 +8,33 @@ internal static class UiFactory
         Text = text,
         AutoSize = true,
         Anchor = AnchorStyles.Left,
-        Margin = new Padding(8, 9, 2, 0),
+        Margin = new Padding(8, 0, 2, 0),
     };
 
+    // 行内のコントロールは Anchor = Left と上下対称の余白で、行の高さの中央にそろえる
     public static TextBox CreateTextBox(int width, bool readOnly = false) => new()
     {
         Width = width,
         ReadOnly = readOnly,
-        Margin = new Padding(3, 6, 3, 3),
+        Anchor = AnchorStyles.Left,
+        Margin = new Padding(3, 4, 3, 4),
     };
 
-    public static ComboBox CreateCombo(int width, IEnumerable<string> items)
+    /// <summary>一番長い選択肢が切れない幅のコンボボックスを作る</summary>
+    public static ComboBox CreateCombo(IEnumerable<string> items)
     {
         var combo = new ComboBox
         {
-            Width = width,
             DropDownStyle = ComboBoxStyle.DropDownList,
-            Margin = new Padding(3, 6, 3, 3),
+            Anchor = AnchorStyles.Left,
+            Margin = new Padding(3, 4, 3, 4),
         };
         combo.Items.AddRange(items.Cast<object>().ToArray());
+        var textWidth = combo.Items.Cast<string>()
+            .Select(item => TextRenderer.MeasureText(item, combo.Font).Width)
+            .DefaultIfEmpty(0)
+            .Max();
+        combo.Width = textWidth + SystemInformation.VerticalScrollBarWidth + 8;
         return combo;
     }
 
@@ -34,7 +42,8 @@ internal static class UiFactory
     {
         Text = text,
         AutoSize = true,
-        Margin = new Padding(8, 9, 8, 3),
+        Anchor = AnchorStyles.Left,
+        Margin = new Padding(8, 4, 8, 4),
     };
 
     public static Button CreateButton(string text, EventHandler onClick)
@@ -43,7 +52,8 @@ internal static class UiFactory
         {
             Text = text,
             AutoSize = true,
-            Margin = new Padding(3, 6, 3, 3),
+            Anchor = AnchorStyles.Left,
+            Margin = new Padding(3, 4, 3, 4),
             Padding = new Padding(6, 2, 6, 2),
         };
         button.Click += onClick;

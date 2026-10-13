@@ -15,7 +15,9 @@ public class SettingsDialog : Form
         _onDataImported = onDataImported;
 
         Text = Constants.ButtonSettings;
-        ClientSize = new Size(360, 220);
+        // ボタンが切れないよう、高さは中身に合わせる（画面の拡大率で文字とボタンの大きさが変わるため）
+        AutoSize = true;
+        AutoSizeMode = AutoSizeMode.GrowAndShrink;
         StartPosition = FormStartPosition.CenterParent;
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MinimizeBox = false;
@@ -30,7 +32,9 @@ public class SettingsDialog : Form
 
         var layout = new FlowLayoutPanel
         {
-            Dock = DockStyle.Fill,
+            AutoSize = true,
+            AutoSizeMode = AutoSizeMode.GrowAndShrink,
+            MinimumSize = new Size(360, 0),
             FlowDirection = FlowDirection.TopDown,
             WrapContents = false,
             Padding = new Padding(15),
