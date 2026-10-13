@@ -18,25 +18,19 @@ public static class DbInitializer
         SeedMainDiseases(db);
         SeedSheetNames(db);
         SeedTemplates(db);
+        db.SaveChanges();
     }
 
     private static void SeedMainDiseases(AppDbContext db)
     {
-        if (db.MainDiseases.Any())
-            return;
-
         db.MainDiseases.AddRange(
             new MainDisease { Id = 1, Name = "高血圧症" },
             new MainDisease { Id = 2, Name = "脂質異常症" },
             new MainDisease { Id = 3, Name = "糖尿病" });
-        db.SaveChanges();
     }
 
     private static void SeedSheetNames(AppDbContext db)
     {
-        if (db.SheetNames.Any())
-            return;
-
         db.SheetNames.AddRange(
             new SheetName { MainDiseaseId = 1, Name = "1_血圧130-80以下" },
             new SheetName { MainDiseaseId = 1, Name = "2_血圧140-90以下" },
@@ -47,14 +41,10 @@ public static class DbInitializer
             new SheetName { MainDiseaseId = 3, Name = "1_HbA1c７％" },
             new SheetName { MainDiseaseId = 3, Name = "2_HbA1c６％" },
             new SheetName { MainDiseaseId = 3, Name = "3_HbA1c８％" });
-        db.SaveChanges();
     }
 
     private static void SeedTemplates(AppDbContext db)
     {
-        if (db.Templates.Any())
-            return;
-
         db.Templates.AddRange(
             new PlanTemplate
             {
@@ -173,6 +163,5 @@ public static class DbInitializer
                 DailyActivity = "ストレッチ運動を主に行う",
                 Other1 = "睡眠の確保1日7時間", Other2 = "家庭での血圧の測定"
             });
-        db.SaveChanges();
     }
 }

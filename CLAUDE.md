@@ -44,7 +44,7 @@ UI層     Forms/           WinFormsフォーム・イベントハンドラ
 
 ### UI層 (`Forms/`)
 
-- `MainForm.cs`: ホーム画面。患者ID入力で pat.csv から基本情報を自動読込し、計画書一覧（DataGridView）を表示。行クリックで編集画面を開く。前回計画コピーもここ。
+- `MainForm.cs`: ホーム画面。患者ID入力で pat.csv から基本情報を自動読込し、計画書一覧（DataGridView）を表示。行クリックで編集画面を開く。選択中の患者（`PatientCsvRecord`）を保持し、編集画面へそのまま渡す。
 - `PlanEditForm.cs`: 新規作成・編集・テンプレート編集の3モードを `PlanFormMode` で共用。主病名変更→シート名絞り込み、シート名変更→テンプレート自動適用、喫煙チェックボックスの排他制御。
 - `SettingsDialog.cs`: バージョン表示・CSV出力/取込。
 - `UiFactory.cs`: ラベル・コンボボックス・行パネル等の生成ヘルパー。
@@ -53,7 +53,7 @@ UI層     Forms/           WinFormsフォーム・イベントハンドラ
 
 - `TreatmentPlanGenerator.cs`: `CreatePlanFile()` がClosedXMLでテンプレート読込 → 共通情報シートへセル入力 → Code128バーコード画像を初回用・継続用シートに配置 → xlsm保存。`GeneratePlan()` は生成後にExcelで開く。初回用/継続用の切替は作成回数（`CreationCount`）が1かどうかで判定し、B13セルに作成回数を出力する。
 - `PatientCsvService.cs`: pat.csv（Shift_JIS・ヘッダなし・先頭3行）から患者データ読込。
-- `PatientService.cs`: 主病名・シート名マスタ読込、計画書履歴取得。
+- `PatientService.cs`: 主病名・シート名マスタ読込、計画書履歴取得、前回計画コピー。
 - `DataExportService.cs`: 患者情報のCSV出力/取込（Python版のエクスポート形式と互換）。
 - `FileMonitorService.cs`: FileSystemWatcherで pat.csv を監視。削除でアプリ終了。
 
@@ -75,7 +75,13 @@ UI層     Forms/           WinFormsフォーム・イベントハンドラ
 
 1. `Models/PatientInfo.cs` に `[Column("列名")]` 付きプロパティを追加
 2. `EnsureCreated()` は既存DBを変更しないため、既存の `ldtp_app.db` には手動で `ALTER TABLE patient_info ADD COLUMN ...` を適用（新規DBは自動作成される）
-3. サービス層（CSV入出力の列定義含む）・UI層を更新
+3. フィールドを列挙している次の箇所を更新（漏れてもビルドは通るので注意）
+   - `PlanEditForm`: `LoadRecord` / `ApplyGuidanceFields` / `ApplyTemplate` / `SaveTemplate`
+   - `DataExportService.Columns`（CSV入出力の列定義）
+   - `TreatmentPlanGenerator.PopulateCommonSheet`（Excelのセル番地）
+   - `LDTPlan.Tests/TestData.FullPatientInfo`（全列に値を入れるテストデータ）
+
+前回計画コピー（`PatientService.CopyLatestPlan`）はレコード全体を複製するので、列を追加しても更新は不要。
 
 ## Excelテンプレート変更手順
 

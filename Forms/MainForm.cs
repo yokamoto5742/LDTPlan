@@ -1,6 +1,4 @@
 using System.Diagnostics;
-using LDTPlan.Data;
-using LDTPlan.Models;
 using LDTPlan.Services;
 using LDTPlan.Utils;
 using static LDTPlan.Forms.UiFactory;
@@ -200,64 +198,8 @@ public class MainForm : Form
     /// <summary>前回計画コピー: 最新の計画書を発行日と医師情報を更新して複製する</summary>
     private void CopyData(object? sender, EventArgs e)
     {
-        var csvRecord = _currentPatient;
-        if (csvRecord == null)
+        if (_currentPatient == null || !PatientService.CopyLatestPlan(_currentPatient, DateTime.Today))
             return;
-
-        using var db = new AppDbContext();
-        var source = db.PatientInfos
-            .Where(p => p.PatientId == csvRecord.PatientId)
-            .OrderByDescending(p => p.Id)
-            .FirstOrDefault();
-        if (source == null)
-            return;
-
-        var today = DateTime.Today;
-        var copy = new PatientInfo
-        {
-            PatientId = source.PatientId,
-            PatientName = source.PatientName,
-            Kana = source.Kana,
-            Gender = source.Gender,
-            Birthdate = source.Birthdate,
-            IssueDate = today,
-            IssueDateAge = source.Birthdate.HasValue
-                ? DateUtils.CalculateIssueDateAge(source.Birthdate.Value, today)
-                : null,
-            DoctorId = csvRecord.DoctorId,
-            DoctorName = csvRecord.DoctorName,
-            Department = csvRecord.Department,
-            DepartmentId = csvRecord.DepartmentId,
-            MainDiagnosis = source.MainDiagnosis,
-            SheetName = source.SheetName,
-            CreationCount = source.CreationCount + 1,
-            TargetWeight = source.TargetWeight,
-            TargetBp = source.TargetBp,
-            TargetHba1c = source.TargetHba1c,
-            Goal1 = source.Goal1,
-            Goal2 = source.Goal2,
-            TargetAchievement = source.TargetAchievement,
-            Diet1 = source.Diet1,
-            Diet2 = source.Diet2,
-            Diet3 = source.Diet3,
-            Diet4 = source.Diet4,
-            DietComment = source.DietComment,
-            ExercisePrescription = source.ExercisePrescription,
-            ExerciseTime = source.ExerciseTime,
-            ExerciseFrequency = source.ExerciseFrequency,
-            ExerciseIntensity = source.ExerciseIntensity,
-            DailyActivity = source.DailyActivity,
-            ExerciseComment = source.ExerciseComment,
-            Nonsmoker = source.Nonsmoker,
-            SmokingCessation = source.SmokingCessation,
-            Other1 = source.Other1,
-            Other2 = source.Other2,
-            Ophthalmology = source.Ophthalmology,
-            Dental = source.Dental,
-            CancerScreening = source.CancerScreening,
-        };
-        db.PatientInfos.Add(copy);
-        db.SaveChanges();
 
         ShowStatus(Constants.MsgDataCopied);
         RefreshHistory();

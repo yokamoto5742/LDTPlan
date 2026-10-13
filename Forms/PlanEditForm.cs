@@ -79,9 +79,6 @@ public class PlanEditForm : Form
             case PlanFormMode.Edit:
                 LoadRecord();
                 break;
-            case PlanFormMode.Template:
-                ApplyTemplate();
-                break;
         }
     }
 
@@ -394,12 +391,6 @@ public class PlanEditForm : Form
 
     private void DeleteData()
     {
-        if (_recordId == null)
-        {
-            ShowError(Constants.MsgNoDataSelected);
-            return;
-        }
-
         using var db = new AppDbContext();
         var record = db.PatientInfos.Find(_recordId);
         if (record != null)

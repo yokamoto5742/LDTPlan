@@ -1,4 +1,6 @@
 using LDTPlan.Data;
+using LDTPlan.Utils;
+using Microsoft.EntityFrameworkCore;
 
 namespace LDTPlan.Services;
 
@@ -51,7 +53,7 @@ public static class PatientService
         using var db = new AppDbContext();
         return db.PatientInfos
             .Where(p => p.PatientId == filterPatientId.Value)
-            .OrderBy(p => p.PatientId).ThenByDescending(p => p.Id)
+            .OrderByDescending(p => p.Id)
             .Select(p => new { p.Id, p.IssueDate, p.Department, p.DoctorName, p.MainDiagnosis, p.SheetName, p.CreationCount })
             .AsEnumerable()
             .Select(p => new PatientHistoryRow
@@ -65,5 +67,32 @@ public static class PatientService
                 CreationCount = p.CreationCount,
             })
             .ToList();
+    }
+
+    /// <summary>前回計画コピー: 患者の最新の計画書を、発行日と医師情報を更新して複製する（計画書がなければ false）</summary>
+    public static bool CopyLatestPlan(PatientCsvRecord patient, DateTime today)
+    {
+        using var db = new AppDbContext();
+        // 追跡なしで読み込み、主キーを 0 に戻して追加する（列を追加しても複写漏れが起きない）
+        var copy = db.PatientInfos.AsNoTracking()
+            .Where(p => p.PatientId == patient.PatientId)
+            .OrderByDescending(p => p.Id)
+            .FirstOrDefault();
+        if (copy == null)
+            return false;
+
+        copy.Id = 0;
+        copy.IssueDate = today;
+        copy.IssueDateAge = copy.Birthdate.HasValue
+            ? DateUtils.CalculateIssueDateAge(copy.Birthdate.Value, today)
+            : null;
+        copy.DoctorId = patient.DoctorId;
+        copy.DoctorName = patient.DoctorName;
+        copy.Department = patient.Department;
+        copy.DepartmentId = patient.DepartmentId;
+        copy.CreationCount++;
+        db.PatientInfos.Add(copy);
+        db.SaveChanges();
+        return true;
     }
 }
