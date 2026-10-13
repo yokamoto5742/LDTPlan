@@ -13,7 +13,12 @@
     <SelfContained>true</SelfContained>
     <PublishSingleFile>true</PublishSingleFile>
     <PublishReadyToRun>true</PublishReadyToRun>
+    <DefaultItemExcludes>$(DefaultItemExcludes);LDTPlan.Tests\**</DefaultItemExcludes>
   </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="LDTPlan.Tests" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include=".claude\agents\changelog-updater.md" />

@@ -6,4 +6,5 @@
   <Project Path="LDTPlan.csproj">
     <Platform Solution="*|x64" Project="x64" />
   </Project>
+  <Project Path="LDTPlan.Tests/LDTPlan.Tests.csproj" />
 </Solution>

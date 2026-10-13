@@ -25,7 +25,12 @@ dotnet run --project LDTPlan.csproj
 dotnet publish LDTPlan.csproj -c Release
 ```
 
-テストプロジェクトは未整備。動作検証はscratchpadのファイルベースアプリ（`dotnet run <file>.cs`）でサービス層を直接呼び出して行った実績あり（EF Core利用時は `#:property PublishAot=false` が必要）。
+`LDTPlan.Tests/`（xUnit）はサービス層・データ層・`Utils/` のテスト。`TestEnvironment` が一時フォルダを指す `config.ini` と空のDBを用意する。UI層（`Forms/`）のテストはないため、画面の変更は手動で確認する。
+
+```bash
+# テスト
+dotnet test LDTPlan.Tests/LDTPlan.Tests.csproj
+```
 
 ## アーキテクチャ
 
