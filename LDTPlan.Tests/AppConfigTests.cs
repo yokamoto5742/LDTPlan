@@ -42,6 +42,73 @@ public sealed class AppConfigTests : IDisposable
     }
 
     [Fact]
+    public void 設定値を読み込む()
+    {
+        _env.WriteConfig("", """
+            [settings]
+            window_width = 1300
+            window_height =900
+            startup_log = false
+
+            [UI]
+            heading_font_size = 20
+
+            [DataTable]
+            width = 1100
+
+            [Barcode]
+            quiet_zone = 2
+            image_width = 300
+            image_height = 40
+            image_position = C3
+            """);
+
+        Assert.Equal(1300, AppConfig.WindowWidth);
+        Assert.Equal(900, AppConfig.WindowHeight);
+        Assert.False(AppConfig.StartupLogEnabled);
+        Assert.Equal(15f, AppConfig.HeadingFontSize); // 20px = 15pt
+        Assert.Equal(1100, AppConfig.DataTableWidth);
+        Assert.Equal(2, AppConfig.BarcodeQuietZone);
+        Assert.Equal(300, AppConfig.BarcodeImageWidth);
+        Assert.Equal(40, AppConfig.BarcodeImageHeight);
+        Assert.Equal("C3", AppConfig.BarcodeImagePosition);
+    }
+
+    [Fact]
+    public void 設定がない項目は既定値を使う()
+    {
+        _env.WriteConfig("");
+
+        Assert.Equal(1200, AppConfig.WindowWidth);
+        Assert.Equal(900, AppConfig.WindowHeight);
+        Assert.True(AppConfig.StartupLogEnabled);
+        Assert.Equal(12f, AppConfig.HeadingFontSize);
+        Assert.Equal(1200, AppConfig.DataTableWidth);
+        Assert.Equal(1, AppConfig.BarcodeQuietZone);
+        Assert.Equal(200, AppConfig.BarcodeImageWidth);
+        Assert.Equal(30, AppConfig.BarcodeImageHeight);
+        Assert.Equal("B2", AppConfig.BarcodeImagePosition);
+    }
+
+    [Fact]
+    public void 配布するconfig_iniのキーはすべて読み込まれる()
+    {
+        // リポジトリ直下の config.ini（テスト実行フォルダから見て5階層上）
+        var repositoryConfig = Path.GetFullPath(
+            Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "config.ini"));
+        File.Copy(repositoryConfig, AppConfig.ConfigPath, overwrite: true);
+        AppConfig.Load();
+
+        Assert.Equal(1300, AppConfig.WindowWidth);
+        Assert.Equal(1300, AppConfig.DataTableWidth);
+        Assert.Equal(12f, AppConfig.HeadingFontSize);
+        Assert.Equal(200, AppConfig.BarcodeImageWidth);
+        Assert.Equal("B2", AppConfig.BarcodeImagePosition);
+        Assert.Equal("39221", AppConfig.DocumentNumber);
+        Assert.EndsWith("LDTPform.xlsm", AppConfig.TemplatePath);
+    }
+
+    [Fact]
     public void db_urlがない場合は既定のファイル名を使う()
     {
         _env.WriteConfig("");

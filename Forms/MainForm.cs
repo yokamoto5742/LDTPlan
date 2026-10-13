@@ -51,17 +51,13 @@ public class MainForm : Form
     private void BuildUi()
     {
         Text = Constants.AppTitle;
-        ClientSize = new Size(
-            AppConfig.GetInt("settings", "window_width", 1200),
-            AppConfig.GetInt("settings", "window_height", 900));
+        ClientSize = new Size(AppConfig.WindowWidth, AppConfig.WindowHeight);
         StartPosition = FormStartPosition.CenterScreen;
         AutoScroll = true;
 
-        var tableWidth = AppConfig.GetInt("DataTable", "width", 1200);
+        ConfigureHistoryGrid(AppConfig.DataTableWidth);
 
-        ConfigureHistoryGrid(tableWidth);
-
-        var headingFont = new Font(Font.FontFamily, AppConfig.GetInt("UI", "heading_font_size", 16) * 0.75f);
+        var headingFont = new Font(Font.FontFamily, AppConfig.HeadingFontSize);
         var historyHeading = CreateLabel(Constants.HistoryHeading);
         historyHeading.Font = headingFont;
 

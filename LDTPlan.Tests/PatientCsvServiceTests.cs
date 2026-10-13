@@ -54,6 +54,16 @@ public sealed class PatientCsvServiceTests : IDisposable
     }
 
     [Fact]
+    public void 患者IDが数値でない行は読み飛ばす()
+    {
+        _env.WritePatientCsv(Line1.Replace(",123,", ",山田,"), Line2);
+
+        var records = PatientCsvService.LoadPatientData();
+
+        Assert.Equal(456, Assert.Single(records).PatientId);
+    }
+
+    [Fact]
     public void 患者CSVがない場合は例外を投げる()
     {
         Assert.Throws<FileNotFoundException>(() => PatientCsvService.LoadPatientData());

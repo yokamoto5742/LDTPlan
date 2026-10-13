@@ -90,7 +90,7 @@ public class PlanEditForm : Form
         AutoScroll = true;
         MinimizeBox = false;
 
-        var headingFont = new Font(Font.FontFamily, AppConfig.GetInt("UI", "heading_font_size", 16) * 0.75f, FontStyle.Bold);
+        var headingFont = new Font(Font.FontFamily, AppConfig.HeadingFontSize, FontStyle.Bold);
         var titleLabel = new Label
         {
             Text = ModeTitle(),
@@ -391,14 +391,26 @@ public class PlanEditForm : Form
 
     private void DeleteData()
     {
-        using var db = new AppDbContext();
-        var record = db.PatientInfos.Find(_recordId);
-        if (record != null)
+        var answer = MessageBox.Show(this, Constants.MsgConfirmDelete, Text,
+            MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+        if (answer != DialogResult.Yes)
+            return;
+
+        try
         {
-            db.PatientInfos.Remove(record);
-            db.SaveChanges();
+            using var db = new AppDbContext();
+            var record = db.PatientInfos.Find(_recordId);
+            if (record != null)
+            {
+                db.PatientInfos.Remove(record);
+                db.SaveChanges();
+            }
+            Close();
         }
-        Close();
+        catch (Exception ex)
+        {
+            ShowError(ex.Message);
+        }
     }
 
     private void SaveTemplate()

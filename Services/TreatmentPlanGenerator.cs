@@ -120,31 +120,8 @@ public static class TreatmentPlanGenerator
 
     private static void SetCell(IXLWorksheet sheet, string address, object? value)
     {
-        var cell = sheet.Cell(address);
-        switch (value)
-        {
-            case null:
-                cell.Clear(XLClearOptions.Contents);
-                break;
-            case string s:
-                cell.Value = s;
-                break;
-            case int i:
-                cell.Value = i;
-                break;
-            case double d:
-                cell.Value = d;
-                break;
-            case bool b:
-                cell.Value = b;
-                break;
-            case DateTime dt:
-                cell.Value = dt;
-                break;
-            default:
-                cell.Value = value.ToString();
-                break;
-        }
+        // null は空白セルになる
+        sheet.Cell(address).Value = XLCellValue.FromObject(value);
     }
 
     private static string BuildDocumentCode(PatientInfo p)
@@ -159,18 +136,15 @@ public static class TreatmentPlanGenerator
 
     private static MemoryStream CreateBarcodePng(string data)
     {
-        var imageWidth = AppConfig.GetInt("Barcode", "image_width", 200);
-        var imageHeight = AppConfig.GetInt("Barcode", "image_height", 30);
-
         var writer = new BarcodeWriterPixelData
         {
             Format = BarcodeFormat.CODE_128,
             Options = new EncodingOptions
             {
                 // 貼り付けサイズより大きめに描画して縮小時の画質を確保する
-                Width = imageWidth * 4,
-                Height = imageHeight * 4,
-                Margin = AppConfig.GetInt("Barcode", "quiet_zone", 1),
+                Width = AppConfig.BarcodeImageWidth * 4,
+                Height = AppConfig.BarcodeImageHeight * 4,
+                Margin = AppConfig.BarcodeQuietZone,
             },
         };
 
@@ -198,10 +172,8 @@ public static class TreatmentPlanGenerator
     {
         barcodePng.Position = 0;
         sheet.AddPicture(barcodePng)
-            .MoveTo(sheet.Cell(AppConfig.Get("Barcode", "image_position", "B2")))
-            .WithSize(
-                AppConfig.GetInt("Barcode", "image_width", 200),
-                AppConfig.GetInt("Barcode", "image_height", 30));
+            .MoveTo(sheet.Cell(AppConfig.BarcodeImagePosition))
+            .WithSize(AppConfig.BarcodeImageWidth, AppConfig.BarcodeImageHeight);
     }
 
     private static void ActivateTargetSheet(XLWorkbook workbook, bool isFirstPlan)

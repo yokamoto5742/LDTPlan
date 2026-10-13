@@ -3,7 +3,7 @@ namespace LDTPlan;
 /// <summary>UI表示文字列とドロップダウン選択肢の定数</summary>
 public static class Constants
 {
-    public const string AppVersion = "1.1.11";
+    public const string AppVersion = "1.1.12";
     public const string AppLastUpdated = "2026-10-13";
 
     // ウィンドウ・見出し
@@ -91,6 +91,7 @@ public static class Constants
     public const string MsgSavedButPlanFailedFormat =
         "データは保存されましたが、計画書を作成できませんでした。編集画面の「印刷」から作成し直してください。\n{0}";
     public const string MsgTemplateSaved = "テンプレートが保存されました";
+    public const string MsgConfirmDelete = "この計画書を削除しますか？（元に戻せません）";
     public const string MsgManualPathError = "操作マニュアルのパスを確認してください";
     public const string MsgManualOpenErrorFormat = "操作マニュアルを開けませんでした: {0}";
     public const string MsgPatientNotInCsv = "患者情報（pat.csv）にない患者IDのため保存できません";

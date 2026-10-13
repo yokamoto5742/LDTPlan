@@ -24,6 +24,18 @@ public static class PatientCsvService
 {
     private const int MaxRows = 3;
 
+    // pat.csv の列位置（0始まり）。ここにない列は使用しない
+    private const int ColPatientId = 2;
+    private const int ColName = 3;
+    private const int ColKana = 4;
+    private const int ColGenderCode = 5;
+    private const int ColBirthdate = 6;
+    private const int ColDoctorId = 9;
+    private const int ColDoctorName = 10;
+    private const int ColDepartmentId = 13;
+    private const int ColDepartment = 14;
+    private const int ColumnCount = 15;
+
     /// <summary>患者CSVデータ読み込み（Shift_JIS・ヘッダなし・先頭3行のみ）</summary>
     public static List<PatientCsvRecord> LoadPatientData()
     {
@@ -33,20 +45,21 @@ public static class PatientCsvService
         foreach (var line in File.ReadLines(AppConfig.PatientDataPath, encoding).Take(MaxRows))
         {
             var f = SplitCsvLine(line);
-            if (f.Count < 15)
+            // 列数が足りない行・患者IDが数値でない行（列ずれなど）は読み飛ばす
+            if (f.Count < ColumnCount || !int.TryParse(f[ColPatientId].Trim(), out var patientId))
                 continue;
 
             records.Add(new PatientCsvRecord
             {
-                PatientId = ParseInt(f[2]),
-                Name = f[3],
-                Kana = f[4],
-                GenderCode = ParseInt(f[5]),
-                Birthdate = ParseDate(f[6]),
-                DoctorId = ParseInt(f[9]),
-                DoctorName = f[10],
-                DepartmentId = ParseInt(f[13]),
-                Department = f[14],
+                PatientId = patientId,
+                Name = f[ColName],
+                Kana = f[ColKana],
+                GenderCode = ParseInt(f[ColGenderCode]),
+                Birthdate = ParseDate(f[ColBirthdate]),
+                DoctorId = ParseInt(f[ColDoctorId]),
+                DoctorName = f[ColDoctorName],
+                DepartmentId = ParseInt(f[ColDepartmentId]),
+                Department = f[ColDepartment],
             });
         }
 

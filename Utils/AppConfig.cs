@@ -31,16 +31,16 @@ public static class AppConfig
         }
     }
 
-    public static string Get(string section, string key, string fallback = "")
+    private static string Get(string section, string key, string fallback = "")
         => Sections.TryGetValue(section, out var s) && s.TryGetValue(key, out var v) ? v : fallback;
 
-    public static int GetInt(string section, string key, int fallback)
+    private static int GetInt(string section, string key, int fallback)
         => int.TryParse(Get(section, key), out var v) ? v : fallback;
 
-    public static bool GetBool(string section, string key, bool fallback)
+    private static bool GetBool(string section, string key, bool fallback)
         => bool.TryParse(Get(section, key), out var v) ? v : fallback;
 
-    // 主要設定値
+    // 設定値（キー名と既定値はここだけに書く）
     public static string DbPath
     {
         get
@@ -61,4 +61,16 @@ public static class AppConfig
     public static string ManualPdfPath => Get("FilePaths", "manual_pdf");
     public static string DocumentNumber => Get("Document", "document_number");
     public static bool StartupLogEnabled => GetBool("settings", "startup_log", true);
+
+    public static int WindowWidth => GetInt("settings", "window_width", 1200);
+    public static int WindowHeight => GetInt("settings", "window_height", 900);
+    public static int DataTableWidth => GetInt("DataTable", "width", 1200);
+
+    /// <summary>見出しのフォントサイズ（config.ini のピクセル値をポイントに換算して返す）</summary>
+    public static float HeadingFontSize => GetInt("UI", "heading_font_size", 16) * 0.75f;
+
+    public static int BarcodeImageWidth => GetInt("Barcode", "image_width", 200);
+    public static int BarcodeImageHeight => GetInt("Barcode", "image_height", 30);
+    public static int BarcodeQuietZone => GetInt("Barcode", "quiet_zone", 1);
+    public static string BarcodeImagePosition => Get("Barcode", "image_position", "B2");
 }
