@@ -29,7 +29,15 @@ public class MainForm : Form
     {
         BuildUi();
 
-        Load += (_, _) => Initialize();
+        // 画面を先に表示してから患者情報と履歴を読み込む（DBアクセスで表示を待たせない）
+        Shown += (_, _) =>
+        {
+            Update();
+            StartupLog.Mark("画面表示");
+            Initialize();
+            StartupLog.Mark("履歴表示完了");
+            StartupLog.Flush();
+        };
         Resize += (_, _) => WarnIfWindowTooSmall();
         FormClosed += (_, _) => _fileMonitor?.Dispose();
         _statusTimer.Tick += (_, _) =>

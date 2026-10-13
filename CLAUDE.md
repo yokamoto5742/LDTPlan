@@ -55,7 +55,7 @@ UI層     Forms/           WinFormsフォーム・イベントハンドラ
 ### データ層 (`Models/` + `Data/`)
 
 - `Data/AppDbContext.cs`: EF Core DbContext。操作ごとに `using var db = new AppDbContext()` で生成する。
-- `Data/DbInitializer.cs`: 起動時に `EnsureCreated()` でテーブル作成、マスタ（主病名3件・シート名9件・テンプレート9件）を投入。
+- `Data/DbInitializer.cs`: 起動時にDBファイルが存在しない場合のみ `EnsureCreated()` でテーブル作成、マスタ（主病名3件・シート名9件・テンプレート9件）を投入。
 - モデル: `PatientInfo`（47フィールド）・`MainDisease`・`SheetName`・`PlanTemplate`。テーブル名・列名は `[Table]`/`[Column]` 属性でPython版SQLite DBと互換。
 
 ### 設定 (`config.ini`)

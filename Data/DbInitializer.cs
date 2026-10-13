@@ -1,4 +1,5 @@
 using LDTPlan.Models;
+using LDTPlan.Utils;
 
 namespace LDTPlan.Data;
 
@@ -7,6 +8,10 @@ public static class DbInitializer
     /// <summary>テーブル作成と初期データ投入</summary>
     public static void Initialize()
     {
+        // 既存DBは作成・初期データ投入済みのため、起動を速くする目的でDBアクセスを省略する
+        if (File.Exists(AppConfig.DbPath))
+            return;
+
         using var db = new AppDbContext();
         db.Database.EnsureCreated();
 
