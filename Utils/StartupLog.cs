@@ -17,6 +17,9 @@ public static class StartupLog
     /// <summary>記録した内容をファイルへ書き出す（直近1回分で上書き）</summary>
     public static void Flush()
     {
+        if (!AppConfig.StartupLogEnabled)
+            return;
+
         try
         {
             File.WriteAllLines(LogPath, Lines);

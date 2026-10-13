@@ -2,6 +2,12 @@
 
 このファイルは [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) の形式に従い、バージョン番号は [セマンティック バージョニング](https://semver.org/lang/ja/) に準拠する。
 
+## [1.1.7] - 2026-10-13
+
+### 追加
+
+- `startup.log` を出力するかどうかを `config.ini` の `[settings]` セクションの `startup_log`（`true` / `false`）で切り替えられるようにした（計測が不要な端末でログファイルを作らないようにするため。項目がない場合はこれまでどおり出力する）
+
 ## [1.1.6] - 2026-10-13
 
 ### 追加

@@ -58,4 +58,5 @@ public static class AppConfig
     public static string ExportFolder => Get("FilePaths", "export_folder");
     public static string ManualPdfPath => Get("FilePaths", "manual_pdf");
     public static string DocumentNumber => Get("Document", "document_number");
+    public static bool StartupLogEnabled => GetBool("settings", "startup_log", true);
 }
