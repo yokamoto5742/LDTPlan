@@ -23,6 +23,9 @@ public class MainForm : Form
     private readonly System.Windows.Forms.Timer _statusTimer = new() { Interval = 3000 };
 
     private List<PatientCsvRecord> _csvPatients = [];
+    // 入力中の患者ID（数値でなければ null）と、それに対応する pat.csv の患者（なければ null）
+    private int? _patientId;
+    private PatientCsvRecord? _currentPatient;
     private FileMonitorService? _fileMonitor;
 
     public MainForm()
@@ -138,37 +141,28 @@ public class MainForm : Form
 
     private void OnPatientIdChanged(object? sender, EventArgs e)
     {
-        if (int.TryParse(_txtPatientId.Text.Trim(), out var patientId))
-            LoadPatientInfo(patientId);
+        _patientId = int.TryParse(_txtPatientId.Text.Trim(), out var id) ? id : null;
+        _currentPatient = _csvPatients.FirstOrDefault(r => r.PatientId == _patientId);
+        ShowPatientInfo(_currentPatient);
         RefreshHistory();
     }
 
-    private void LoadPatientInfo(int patientId)
+    /// <summary>患者基本情報を表示する（pat.csv にない患者は全欄を空にする）</summary>
+    private void ShowPatientInfo(PatientCsvRecord? record)
     {
-        var record = _csvPatients.FirstOrDefault(r => r.PatientId == patientId);
-        if (record != null)
-        {
-            _txtName.Text = record.Name;
-            _txtKana.Text = record.Kana;
-            _txtGender.Text = record.Gender;
-            _txtBirthdate.Text = record.Birthdate?.ToString("yyyy/MM/dd") ?? "";
-            _txtDoctorId.Text = record.DoctorId.ToString();
-            _txtDoctorName.Text = record.DoctorName;
-            _txtDepartmentId.Text = record.DepartmentId.ToString();
-            _txtDepartment.Text = record.Department;
-        }
-        else
-        {
-            foreach (var box in new[] { _txtName, _txtKana, _txtGender, _txtBirthdate,
-                                        _txtDoctorId, _txtDoctorName, _txtDepartmentId, _txtDepartment })
-                box.Text = "";
-        }
+        _txtName.Text = record?.Name ?? "";
+        _txtKana.Text = record?.Kana ?? "";
+        _txtGender.Text = record?.Gender ?? "";
+        _txtBirthdate.Text = record?.Birthdate?.ToString("yyyy/MM/dd") ?? "";
+        _txtDoctorId.Text = record?.DoctorId.ToString() ?? "";
+        _txtDoctorName.Text = record?.DoctorName ?? "";
+        _txtDepartmentId.Text = record?.DepartmentId.ToString() ?? "";
+        _txtDepartment.Text = record?.Department ?? "";
     }
 
     private void RefreshHistory()
     {
-        int? patientId = int.TryParse(_txtPatientId.Text.Trim(), out var id) ? id : null;
-        var rows = PatientService.FetchPatientHistory(patientId);
+        var rows = PatientService.FetchPatientHistory(_patientId);
 
         _historyGrid.Rows.Clear();
         foreach (var row in rows)
@@ -191,20 +185,7 @@ public class MainForm : Form
 
     private void OpenPlanForm(PlanFormMode mode, int? recordId = null)
     {
-        var basicInfo = new PatientBasicInfo
-        {
-            PatientIdText = _txtPatientId.Text.Trim(),
-            Name = _txtName.Text,
-            Kana = _txtKana.Text,
-            Gender = _txtGender.Text,
-            BirthdateText = _txtBirthdate.Text,
-            DoctorIdText = _txtDoctorId.Text,
-            DoctorName = _txtDoctorName.Text,
-            DepartmentIdText = _txtDepartmentId.Text,
-            Department = _txtDepartment.Text,
-        };
-
-        using var form = new PlanEditForm(mode, basicInfo, _csvPatients, recordId);
+        using var form = new PlanEditForm(mode, _currentPatient, recordId);
         form.ShowDialog(this);
         RefreshHistory();
     }
@@ -212,19 +193,16 @@ public class MainForm : Form
     /// <summary>前回計画コピー: 最新の計画書を発行日と医師情報を更新して複製する</summary>
     private void CopyData(object? sender, EventArgs e)
     {
-        if (!int.TryParse(_txtPatientId.Text.Trim(), out var patientId))
+        var csvRecord = _currentPatient;
+        if (csvRecord == null)
             return;
 
         using var db = new AppDbContext();
         var source = db.PatientInfos
-            .Where(p => p.PatientId == patientId)
+            .Where(p => p.PatientId == csvRecord.PatientId)
             .OrderByDescending(p => p.Id)
             .FirstOrDefault();
         if (source == null)
-            return;
-
-        var csvRecord = _csvPatients.FirstOrDefault(r => r.PatientId == patientId);
-        if (csvRecord == null)
             return;
 
         var today = DateTime.Today;

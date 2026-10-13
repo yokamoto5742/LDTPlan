@@ -3,7 +3,7 @@ namespace LDTPlan;
 /// <summary>UI表示文字列とドロップダウン選択肢の定数</summary>
 public static class Constants
 {
-    public const string AppVersion = "1.1.8";
+    public const string AppVersion = "1.1.9";
     public const string AppLastUpdated = "2026-10-13";
 
     // ウィンドウ・見出し
@@ -94,7 +94,7 @@ public static class Constants
     public const string MsgNoDataSelected = "削除するデータが選択されていません";
     public const string MsgManualPathError = "操作マニュアルのパスを確認してください";
     public const string MsgManualOpenErrorFormat = "操作マニュアルを開けませんでした: {0}";
-    public const string MsgPatientNotFoundFormat = "患者ID {0} が見つかりません。";
+    public const string MsgPatientNotInCsv = "患者情報（pat.csv）にない患者IDのため保存できません";
     public const string MsgCsvImported = "CSVファイルからデータがインポートされました";
     public const string MsgCsvImportInvalidFile = "インポートエラー:このファイルはインポートできません";
     public const string MsgCsvImportErrorFormat = "インポート中にエラーが発生しました: {0}";

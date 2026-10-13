@@ -14,26 +14,12 @@ public enum PlanFormMode
     Template,
 }
 
-/// <summary>メイン画面で表示中の患者基本情報（編集保存・新規作成で使用）</summary>
-public class PatientBasicInfo
-{
-    public string PatientIdText { get; init; } = "";
-    public string Name { get; init; } = "";
-    public string Kana { get; init; } = "";
-    public string Gender { get; init; } = "";
-    public string BirthdateText { get; init; } = "";
-    public string DoctorIdText { get; init; } = "";
-    public string DoctorName { get; init; } = "";
-    public string DepartmentIdText { get; init; } = "";
-    public string Department { get; init; } = "";
-}
-
 /// <summary>計画書の新規作成・編集・テンプレート編集画面</summary>
 public class PlanEditForm : Form
 {
     private readonly PlanFormMode _mode;
-    private readonly PatientBasicInfo _basicInfo;
-    private readonly List<PatientCsvRecord> _csvPatients;
+    // メイン画面で表示中の患者（pat.csv にない患者IDのときは null）
+    private readonly PatientCsvRecord? _patient;
     private readonly int? _recordId;
 
     private readonly ComboBox _cmbMainDiagnosis = CreateCombo(200, PatientService.LoadMainDiseases());
@@ -74,13 +60,11 @@ public class PlanEditForm : Form
 
     public PlanEditForm(
         PlanFormMode mode,
-        PatientBasicInfo basicInfo,
-        List<PatientCsvRecord> csvPatients,
+        PatientCsvRecord? patient,
         int? recordId = null)
     {
         _mode = mode;
-        _basicInfo = basicInfo;
-        _csvPatients = csvPatients;
+        _patient = patient;
         _recordId = recordId;
 
         BuildUi();
@@ -326,10 +310,11 @@ public class PlanEditForm : Form
         if (!CheckRequiredFields())
             return;
 
-        PatientInfo patientInfo;
+        var patientInfo = new PatientInfo();
         try
         {
-            patientInfo = CreatePatientInfoFromCsv();
+            ApplyBasicInfo(patientInfo);
+            ApplyGuidanceFields(patientInfo);
 
             using var db = new AppDbContext();
             db.PatientInfos.Add(patientInfo);
@@ -375,7 +360,8 @@ public class PlanEditForm : Form
             if (record == null)
                 return;
 
-            ApplyFormToPatientInfo(record, includeBasicInfo: true);
+            ApplyBasicInfo(record);
+            ApplyGuidanceFields(record);
             db.SaveChanges();
             ShowInfo(Constants.MsgDataSaved);
         }
@@ -395,7 +381,7 @@ public class PlanEditForm : Form
             if (record == null)
                 return;
 
-            ApplyFormToPatientInfo(record, includeBasicInfo: false);
+            ApplyGuidanceFields(record);
             db.SaveChanges();
 
             TreatmentPlanGenerator.GeneratePlan(record);
@@ -463,53 +449,23 @@ public class PlanEditForm : Form
         ShowInfo(Constants.MsgTemplateSaved);
     }
 
-    /// <summary>患者CSVとフォーム入力から新規のPatientInfoを作成</summary>
-    private PatientInfo CreatePatientInfoFromCsv()
+    /// <summary>メイン画面で表示中の患者の基本情報を反映（新規登録・編集保存で使用）</summary>
+    private void ApplyBasicInfo(PatientInfo patientInfo)
     {
-        if (!int.TryParse(_basicInfo.PatientIdText, out var patientId))
-            throw new InvalidOperationException(
-                string.Format(Constants.MsgPatientNotFoundFormat, _basicInfo.PatientIdText));
+        var csv = _patient ?? throw new InvalidOperationException(Constants.MsgPatientNotInCsv);
 
-        var csvRecord = _csvPatients.FirstOrDefault(r => r.PatientId == patientId)
-            ?? throw new InvalidOperationException(
-                string.Format(Constants.MsgPatientNotFoundFormat, patientId));
-
-        var patientInfo = new PatientInfo
-        {
-            PatientId = patientId,
-            PatientName = csvRecord.Name,
-            Kana = csvRecord.Kana,
-            Gender = csvRecord.Gender,
-            Birthdate = csvRecord.Birthdate,
-            DoctorId = ParseIntOrThrow(_basicInfo.DoctorIdText, Constants.LabelDoctorId),
-            DoctorName = _basicInfo.DoctorName,
-            Department = _basicInfo.Department,
-            DepartmentId = ParseIntOrThrow(_basicInfo.DepartmentIdText, Constants.LabelDepartmentId),
-        };
-        ApplyGuidanceFields(patientInfo);
-        return patientInfo;
+        patientInfo.PatientId = csv.PatientId;
+        patientInfo.PatientName = csv.Name;
+        patientInfo.Kana = csv.Kana;
+        patientInfo.Gender = csv.Gender;
+        patientInfo.Birthdate = csv.Birthdate;
+        patientInfo.DoctorId = csv.DoctorId;
+        patientInfo.DoctorName = csv.DoctorName;
+        patientInfo.DepartmentId = csv.DepartmentId;
+        patientInfo.Department = csv.Department;
     }
 
-    /// <summary>フォーム入力を既存レコードへ反映</summary>
-    private void ApplyFormToPatientInfo(PatientInfo patientInfo, bool includeBasicInfo)
-    {
-        if (includeBasicInfo)
-        {
-            patientInfo.PatientId = ParseIntOrThrow(_basicInfo.PatientIdText, Constants.LabelPatientId);
-            patientInfo.PatientName = _basicInfo.Name;
-            patientInfo.Kana = _basicInfo.Kana;
-            patientInfo.Gender = _basicInfo.Gender;
-            patientInfo.Birthdate = DateTime.ParseExact(
-                _basicInfo.BirthdateText, "yyyy/MM/dd", CultureInfo.InvariantCulture);
-            patientInfo.DoctorId = ParseIntOrThrow(_basicInfo.DoctorIdText, Constants.LabelDoctorId);
-            patientInfo.DoctorName = _basicInfo.DoctorName;
-            patientInfo.Department = _basicInfo.Department;
-            patientInfo.DepartmentId = ParseIntOrThrow(_basicInfo.DepartmentIdText, Constants.LabelDepartmentId);
-        }
-
-        ApplyGuidanceFields(patientInfo);
-    }
-
+    /// <summary>フォーム入力を反映（発行日時点の年齢は生年月日から計算するため、基本情報の後に呼ぶ）</summary>
     private void ApplyGuidanceFields(PatientInfo patientInfo)
     {
         patientInfo.MainDiagnosis = GetComboValue(_cmbMainDiagnosis);
