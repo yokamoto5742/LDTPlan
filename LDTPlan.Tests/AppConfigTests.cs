@@ -53,9 +53,6 @@ public sealed class AppConfigTests : IDisposable
             [UI]
             heading_font_size = 20
 
-            [DataTable]
-            width = 1100
-
             [Barcode]
             quiet_zone = 2
             image_width = 300
@@ -67,7 +64,6 @@ public sealed class AppConfigTests : IDisposable
         Assert.Equal(900, AppConfig.WindowHeight);
         Assert.False(AppConfig.StartupLogEnabled);
         Assert.Equal(15f, AppConfig.HeadingFontSize); // 20px = 15pt
-        Assert.Equal(1100, AppConfig.DataTableWidth);
         Assert.Equal(2, AppConfig.BarcodeQuietZone);
         Assert.Equal(300, AppConfig.BarcodeImageWidth);
         Assert.Equal(40, AppConfig.BarcodeImageHeight);
@@ -83,7 +79,6 @@ public sealed class AppConfigTests : IDisposable
         Assert.Equal(900, AppConfig.WindowHeight);
         Assert.True(AppConfig.StartupLogEnabled);
         Assert.Equal(12f, AppConfig.HeadingFontSize);
-        Assert.Equal(1200, AppConfig.DataTableWidth);
         Assert.Equal(1, AppConfig.BarcodeQuietZone);
         Assert.Equal(200, AppConfig.BarcodeImageWidth);
         Assert.Equal(30, AppConfig.BarcodeImageHeight);
@@ -100,7 +95,6 @@ public sealed class AppConfigTests : IDisposable
         AppConfig.Load();
 
         Assert.Equal(1300, AppConfig.WindowWidth);
-        Assert.Equal(1300, AppConfig.DataTableWidth);
         Assert.Equal(12f, AppConfig.HeadingFontSize);
         Assert.Equal(200, AppConfig.BarcodeImageWidth);
         Assert.Equal("B2", AppConfig.BarcodeImagePosition);

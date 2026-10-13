@@ -55,7 +55,23 @@ public class MainForm : Form
         StartPosition = FormStartPosition.CenterScreen;
         AutoScroll = true;
 
-        ConfigureHistoryGrid(AppConfig.DataTableWidth);
+        var patientRow = CreateRow(
+            CreateLabel(Constants.LabelPatientId), _txtPatientId,
+            CreateLabel(Constants.LabelName), _txtName,
+            CreateLabel(Constants.LabelKana), _txtKana,
+            CreateLabel(Constants.LabelGender), _txtGender,
+            CreateLabel(Constants.LabelBirthdate), _txtBirthdate);
+        var doctorRow = CreateRow(
+            CreateLabel(Constants.LabelDoctorId), _txtDoctorId,
+            CreateLabel(Constants.LabelDoctorName), _txtDoctorName,
+            CreateLabel(Constants.LabelDepartmentId), _txtDepartmentId,
+            CreateLabel(Constants.LabelDepartment), _txtDepartment,
+            CreateButton(Constants.ButtonSettings, OpenSettings),
+            CreateButton(Constants.ButtonManual, OpenManualPdf));
+
+        // 一覧の右端を、上の入力行（広いほう）の右端にそろえる
+        var rowWidth = Math.Max(patientRow.PreferredSize.Width, doctorRow.PreferredSize.Width);
+        ConfigureHistoryGrid(rowWidth - _historyGrid.Margin.Horizontal);
 
         var headingFont = new Font(Font.FontFamily, AppConfig.HeadingFontSize);
         var historyHeading = CreateLabel(Constants.HistoryHeading);
@@ -69,19 +85,8 @@ public class MainForm : Form
             AutoScroll = true,
             Padding = new Padding(10),
         };
-        layout.Controls.Add(CreateRow(
-            CreateLabel(Constants.LabelPatientId), _txtPatientId,
-            CreateLabel(Constants.LabelName), _txtName,
-            CreateLabel(Constants.LabelKana), _txtKana,
-            CreateLabel(Constants.LabelGender), _txtGender,
-            CreateLabel(Constants.LabelBirthdate), _txtBirthdate));
-        layout.Controls.Add(CreateRow(
-            CreateLabel(Constants.LabelDoctorId), _txtDoctorId,
-            CreateLabel(Constants.LabelDoctorName), _txtDoctorName,
-            CreateLabel(Constants.LabelDepartmentId), _txtDepartmentId,
-            CreateLabel(Constants.LabelDepartment), _txtDepartment,
-            CreateButton(Constants.ButtonSettings, OpenSettings),
-            CreateButton(Constants.ButtonManual, OpenManualPdf)));
+        layout.Controls.Add(patientRow);
+        layout.Controls.Add(doctorRow);
         layout.Controls.Add(CreateRow(
             CreateButton(Constants.ButtonCreate, (_, _) => OpenPlanForm(PlanFormMode.Create)),
             CreateButton(Constants.ButtonCopy, CopyData),
@@ -110,13 +115,22 @@ public class MainForm : Form
         _historyGrid.RowHeadersVisible = false;
         _historyGrid.MultiSelect = false;
         _historyGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        _historyGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+        _historyGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         _historyGrid.Columns.Add("issue_date", Constants.ColumnIssueDate);
         _historyGrid.Columns.Add("department", Constants.ColumnDepartment);
         _historyGrid.Columns.Add("doctor_name", Constants.ColumnDoctor);
         _historyGrid.Columns.Add("main_diagnosis", Constants.ColumnMainDiagnosis);
         _historyGrid.Columns.Add("sheet_name", Constants.ColumnSheetName);
         _historyGrid.Columns.Add("creation_count", Constants.ColumnCreationCount);
+
+        // 長さが決まっている発行日・回数は値の幅に固定し、残りを 2:2:2:3 で分ける（シート名が一番長い）
+        _historyGrid.Columns["issue_date"]!.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+        _historyGrid.Columns["creation_count"]!.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+        _historyGrid.Columns["creation_count"]!.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+        _historyGrid.Columns["department"]!.FillWeight = 2;
+        _historyGrid.Columns["doctor_name"]!.FillWeight = 2;
+        _historyGrid.Columns["main_diagnosis"]!.FillWeight = 2;
+        _historyGrid.Columns["sheet_name"]!.FillWeight = 3;
         _historyGrid.CellClick += OnHistoryRowClicked;
     }
 
