@@ -153,6 +153,7 @@ public class PlanEditForm : Form
 
         Controls.Add(layout);
         // 下に余白が残らないよう、高さは中身に合わせる（モードによってボタンの行などの高さが変わるため）
+        MinimumSize = new Size(0, 600);
         ClientSize = new Size(1250, layout.PreferredSize.Height);
     }
 
