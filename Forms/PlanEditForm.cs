@@ -86,7 +86,6 @@ public class PlanEditForm : Form
     private void BuildUi()
     {
         Text = ModeTitle();
-        ClientSize = new Size(1250, 720);
         StartPosition = FormStartPosition.CenterParent;
         AutoScroll = true;
         MinimizeBox = false;
@@ -153,6 +152,8 @@ public class PlanEditForm : Form
         layout.Controls.Add(BuildButtonRow());
 
         Controls.Add(layout);
+        // 下に余白が残らないよう、高さは中身に合わせる（モードによってボタンの行などの高さが変わるため）
+        ClientSize = new Size(1250, layout.PreferredSize.Height);
     }
 
     private string ModeTitle() => _mode switch
