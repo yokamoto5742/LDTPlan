@@ -61,6 +61,8 @@ public static class AppConfig
     public static string ManualPdfPath => Get("FilePaths", "manual_pdf");
     public static string DocumentNumber => Get("Document", "document_number");
     public static bool StartupLogEnabled => GetBool("settings", "startup_log", true);
+    public static string BackupDir => Get("Backup", "backup_dir");
+    public static int BackupRetentionDays => GetInt("Backup", "retention_days", 7);
 
     public static int WindowWidth => GetInt("settings", "window_width", 1200);
     public static int WindowHeight => GetInt("settings", "window_height", 900);

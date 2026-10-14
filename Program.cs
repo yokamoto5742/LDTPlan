@@ -1,7 +1,9 @@
 using System.Text;
 using LDTPlan.Data;
 using LDTPlan.Forms;
+using LDTPlan.Services;
 using LDTPlan.Utils;
+using Microsoft.Data.Sqlite;
 
 namespace LDTPlan;
 
@@ -28,6 +30,18 @@ internal static class Program
         StartupLog.Mark("設定読込完了");
         DbInitializer.Initialize();
         StartupLog.Mark("DB初期化完了");
+
+        // 起動を待たせないよう、バックアップは裏で行う。失敗しても次回起動時に再試行されるので無視する
+        Task.Run(() =>
+        {
+            try
+            {
+                DatabaseBackupService.BackupIfNeeded(DateTime.Now);
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or SqliteException)
+            {
+            }
+        });
 
         // 患者CSVが存在しない場合は起動しない（Python版と同じ挙動）
         if (!File.Exists(AppConfig.PatientDataPath))

@@ -100,6 +100,7 @@ public sealed class AppConfigTests : IDisposable
         Assert.Equal("B2", AppConfig.BarcodeImagePosition);
         Assert.Equal("39221", AppConfig.DocumentNumber);
         Assert.EndsWith("LDTPform.xlsm", AppConfig.TemplatePath);
+        Assert.Equal(7, AppConfig.BackupRetentionDays);
     }
 
     [Fact]

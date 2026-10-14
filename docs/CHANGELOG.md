@@ -2,6 +2,12 @@
 
 このファイルは [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) の形式に従い、バージョン番号は [セマンティック バージョニング](https://semver.org/lang/ja/) に準拠する。
 
+## [1.1.21] - 2026-10-14
+
+### 追加
+
+- 起動時にDBを1日1回 `config.ini` の `[Backup] backup_dir` へ `ldtp_app_yyyymmdd_HHmmss.db` の名前でバックアップし、`retention_days`（既定7日）を過ぎたバックアップを削除する機能を追加（特定の端末の起動に頼る外部スクリプトをやめるため）。起動を待たせないよう裏で実行し、書き込み中でも壊れないようSQLiteのバックアップ機能を使う。`backup_dir` が空欄ならバックアップしない
+
 ## [1.1.20] - 2026-10-14
 
 ### 修正
