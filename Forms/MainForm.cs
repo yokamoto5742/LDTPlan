@@ -116,6 +116,8 @@ public class MainForm : Form
         _historyGrid.MultiSelect = false;
         _historyGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         _historyGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        // 既定の固定高さでは端末のフォントによって見出しの文字が切れるため、文字に合わせて高さを決める
+        _historyGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
         _historyGrid.Columns.Add("issue_date", Constants.ColumnIssueDate);
         _historyGrid.Columns.Add("department", Constants.ColumnDepartment);
         _historyGrid.Columns.Add("doctor_name", Constants.ColumnDoctor);
