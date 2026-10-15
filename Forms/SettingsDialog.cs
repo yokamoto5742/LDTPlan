@@ -35,7 +35,6 @@ public class SettingsDialog : Form
         {
             AutoSize = true,
             AutoSizeMode = AutoSizeMode.GrowAndShrink,
-            MinimumSize = new Size(360, 0),
             FlowDirection = FlowDirection.TopDown,
             WrapContents = false,
             Padding = new Padding(15),

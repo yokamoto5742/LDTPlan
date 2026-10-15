@@ -149,7 +149,9 @@ public class PlanEditForm : Form
         layout.Controls.Add(CreateRow(
             CreateLabel(Constants.LabelOther1), _txtOther1,
             CreateLabel(Constants.LabelOther2), _txtOther2));
-        layout.Controls.Add(CreateRow(_chkOphthalmology, _chkDental, _chkCancerScreening));
+        // 眼科・歯科・がん検診はテンプレートに保存しないため、テンプレート編集では表示しない
+        if (_mode != PlanFormMode.Template)
+            layout.Controls.Add(CreateRow(_chkOphthalmology, _chkDental, _chkCancerScreening));
         layout.Controls.Add(BuildButtonRow());
 
         Controls.Add(layout);
@@ -333,7 +335,6 @@ public class PlanEditForm : Form
             try
             {
                 TreatmentPlanGenerator.GeneratePlan(patientInfo);
-                ShowInfo(Constants.MsgDataSavedAndPrinted);
             }
             catch (Exception ex)
             {

@@ -17,7 +17,6 @@ public class MainForm : Form
     private readonly TextBox _txtBirthdate = CreateTextBox(120, readOnly: true);
     private readonly TextBox _txtDoctorId = CreateTextBox(80, readOnly: true);
     private readonly TextBox _txtDoctorName = CreateTextBox(150, readOnly: true);
-    private readonly TextBox _txtDepartmentId = CreateTextBox(80, readOnly: true);
     private readonly TextBox _txtDepartment = CreateTextBox(150, readOnly: true);
     private readonly DataGridView _historyGrid = new();
     private readonly ToolStripStatusLabel _statusLabel = new();
@@ -86,7 +85,6 @@ public class MainForm : Form
         var doctorRow = CreateRow(
             CreateLabel(Constants.LabelDoctorId), _txtDoctorId,
             CreateLabel(Constants.LabelDoctorName), _txtDoctorName,
-            CreateLabel(Constants.LabelDepartmentId), _txtDepartmentId,
             CreateLabel(Constants.LabelDepartment), _txtDepartment,
             CreateButton(Constants.ButtonSettings, OpenSettings),
             CreateButton(Constants.ButtonManual, OpenManualPdf));
@@ -224,7 +222,6 @@ public class MainForm : Form
         _txtBirthdate.Text = record?.Birthdate?.ToString("yyyy/MM/dd") ?? "";
         _txtDoctorId.Text = record?.DoctorId.ToString() ?? "";
         _txtDoctorName.Text = record?.DoctorName ?? "";
-        _txtDepartmentId.Text = record?.DepartmentId.ToString() ?? "";
         _txtDepartment.Text = record?.Department ?? "";
     }
 
