@@ -1,6 +1,8 @@
 using System.Diagnostics;
+using LDTPlan.Data;
 using LDTPlan.Services;
 using LDTPlan.Utils;
+using Microsoft.Data.Sqlite;
 using static LDTPlan.Forms.UiFactory;
 
 namespace LDTPlan.Forms;
@@ -38,6 +40,19 @@ public class MainForm : Form
             Initialize();
             StartupLog.Mark("履歴表示完了");
             StartupLog.Flush();
+
+            // 既存DBへのインデックス追加は、作成中に書き込みを待たせるため履歴表示の後に裏で行う。
+            // 失敗しても次回起動時に再試行されるので無視する
+            Task.Run(() =>
+            {
+                try
+                {
+                    DbInitializer.EnsurePatientIdIndex();
+                }
+                catch (SqliteException)
+                {
+                }
+            });
         };
         Resize += (_, _) => WarnIfWindowTooSmall();
         FormClosed += (_, _) => _fileMonitor?.Dispose();

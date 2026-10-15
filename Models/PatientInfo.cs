@@ -1,9 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using LDTPlan.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace LDTPlan.Models;
 
 [Table("patient_info")]
+[Index(nameof(PatientId), Name = DbInitializer.PatientIdIndexName)]
 public class PatientInfo
 {
     [Key][Column("id")] public int Id { get; set; }

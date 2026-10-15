@@ -1,10 +1,28 @@
 using LDTPlan.Models;
 using LDTPlan.Utils;
+using Microsoft.Data.Sqlite;
 
 namespace LDTPlan.Data;
 
 public static class DbInitializer
 {
+    public const string PatientIdIndexName = "ix_patient_info_patient_id";
+
+    /// <summary>
+    /// 既存DBに患者IDのインデックスを追加する（作成済みなら何もしない）。
+    /// 共有サーバー上のDBで履歴検索が全件読み込みにならないようにするため。
+    /// インデックスはPython版の読み書きに影響しない
+    /// </summary>
+    public static void EnsurePatientIdIndex()
+    {
+        // Mode=ReadWrite: DBファイルがなければ作らずに失敗させる
+        using var connection = new SqliteConnection($"Data Source={AppConfig.DbPath};Mode=ReadWrite;Pooling=False");
+        connection.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = $"CREATE INDEX IF NOT EXISTS {PatientIdIndexName} ON patient_info(patient_id)";
+        command.ExecuteNonQuery();
+    }
+
     /// <summary>テーブル作成と初期データ投入</summary>
     public static void Initialize()
     {
