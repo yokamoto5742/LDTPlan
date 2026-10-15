@@ -15,6 +15,7 @@ public class SettingsDialog : Form
         _onDataImported = onDataImported;
 
         Text = Constants.ButtonSettings;
+        Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         // ボタンが切れないよう、高さは中身に合わせる（画面の拡大率で文字とボタンの大きさが変わるため）
         AutoSize = true;
         AutoSizeMode = AutoSizeMode.GrowAndShrink;

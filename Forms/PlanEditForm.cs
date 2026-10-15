@@ -86,6 +86,7 @@ public class PlanEditForm : Form
     private void BuildUi()
     {
         Text = ModeTitle();
+        Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         StartPosition = FormStartPosition.CenterParent;
         AutoScroll = true;
         MinimizeBox = false;
