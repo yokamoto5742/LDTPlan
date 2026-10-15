@@ -160,8 +160,8 @@ Excelアドイン型のバーコードツール（特に古いもの）は、**E
 
 ## ライセンス
 
-このプロジェクトのライセンス情報については、 [LICENSE](src/docs/LICENSE) を参照してください。
+このプロジェクトのライセンス情報については、 [LICENSE](docs/LICENSE) を参照してください。
 
 ## 更新履歴
 
-更新履歴は [CHANGELOG.md](src/docs/CHANGELOG.md) を参照してください。
+更新履歴は [CHANGELOG.md](docs/CHANGELOG.md) を参照してください。
