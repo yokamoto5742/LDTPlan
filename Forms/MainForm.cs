@@ -147,8 +147,10 @@ public class MainForm : Form
             MessageBox.Show(this, string.Format(Constants.MsgPatientCsvLoadErrorFormat, ex.Message),
                 Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
+        StartupLog.Mark("患者CSV読込完了");
 
         _fileMonitor = new FileMonitorService(this);
+        StartupLog.Mark("監視開始完了");
 
         if (_csvPatients.Count > 0)
             _txtPatientId.Text = _csvPatients[0].PatientId.ToString();
@@ -180,6 +182,7 @@ public class MainForm : Form
     private void RefreshHistory()
     {
         var rows = PatientService.FetchPatientHistory(_patientId);
+        StartupLog.Mark("履歴検索完了");
 
         _historyGrid.Rows.Clear();
         foreach (var row in rows)
