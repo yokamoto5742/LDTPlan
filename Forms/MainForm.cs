@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using LDTPlan.Data;
 using LDTPlan.Services;
 using LDTPlan.Utils;
@@ -32,13 +33,18 @@ public class MainForm : Form
     {
         BuildUi();
 
-        // 画面を先に表示してから患者情報と履歴を読み込む（DBアクセスで表示を待たせない）
-        Shown += (_, _) =>
+        // 患者情報と履歴を読み込んでから画面を表示する（読込中に入力されないよう、表示前に読み込む）
+        Load += (_, _) =>
         {
-            Update();
-            StartupLog.Mark("画面表示");
+            StartupLog.Mark("画面読込開始");
             Initialize();
             StartupLog.Mark("履歴表示完了");
+        };
+        Shown += (_, _) =>
+        {
+            // 読込中に打たれたキーは溜まっていて表示後に患者ID欄へ届き、文字が重複するため捨てる
+            DiscardPendingKeyInput();
+            StartupLog.Mark("画面表示");
             StartupLog.Flush();
 
             // 既存DBへのインデックス追加は、作成中に書き込みを待たせるため履歴表示の後に裏で行う。
@@ -171,6 +177,33 @@ public class MainForm : Form
             _txtPatientId.Text = _csvPatients[0].PatientId.ToString();
         else
             RefreshHistory();
+    }
+
+    private const uint WmKeyFirst = 0x0100;
+    private const uint WmKeyLast = 0x0109;
+    private const uint PmRemove = 0x0001;
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NativeMessage
+    {
+        public IntPtr HWnd;
+        public uint Message;
+        public IntPtr WParam;
+        public IntPtr LParam;
+        public uint Time;
+        public Point Pt;
+        public uint Private;
+    }
+
+    [DllImport("user32.dll")]
+    private static extern bool PeekMessage(out NativeMessage msg, IntPtr hWnd, uint filterMin, uint filterMax, uint remove);
+
+    /// <summary>メッセージキューに溜まっているキー入力をすべて捨てる</summary>
+    private static void DiscardPendingKeyInput()
+    {
+        while (PeekMessage(out _, IntPtr.Zero, WmKeyFirst, WmKeyLast, PmRemove))
+        {
+        }
     }
 
     private void OnPatientIdChanged(object? sender, EventArgs e)

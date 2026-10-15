@@ -28,6 +28,13 @@ internal static class Program
 
         AppConfig.Load();
         StartupLog.Mark("設定読込完了");
+
+        // メイン画面はDB初期化とデータ読込の後に表示するので、それまでの間は起動中であることを示す
+        var splash = new SplashForm();
+        splash.Show();
+        splash.Update();
+
+
         DbInitializer.Initialize();
         StartupLog.Mark("DB初期化完了");
 
@@ -48,6 +55,7 @@ internal static class Program
             return;
 
         var mainForm = new MainForm();
+        mainForm.Shown += (_, _) => splash.Close();
         StartupLog.Mark("画面生成完了");
         Application.Run(mainForm);
     }
