@@ -85,20 +85,20 @@ public static class Constants
     public const string MsgSelectMainDiagnosis = "主病名を選択してください";
     public const string MsgSelectSheetName = "シート名を選択してください";
     public const string MsgSelectMainDiagnosisAndSheet = "主病名とシート名を選択してください";
-    public const string MsgDataSaved = "データが保存されました";
-    public const string MsgDataCopied = "データがコピーされました";
+    public const string MsgDataSaved = "保存しました";
+    public const string MsgDataCopied = "コピーしました";
     public const string MsgSavedButPlanFailedFormat =
-        "データは保存されましたが、計画書を作成できませんでした。編集画面の「印刷」から作成し直してください。\n{0}";
-    public const string MsgTemplateSaved = "テンプレートが保存されました";
-    public const string MsgConfirmDelete = "この計画書を削除しますか？（元に戻せません）";
-    public const string MsgManualPathError = "操作マニュアルのパスを確認してください";
+        "データを保存しましたが、計画書を作成できませんでした。編集画面の「印刷」から作成してください。\n{0}";
+    public const string MsgTemplateSaved = "テンプレートを保存しました";
+    public const string MsgConfirmDelete = "このデータを削除しますか？（元に戻せません）";
+    public const string MsgManualPathError = "操作マニュアルの保存先を確認してください";
     public const string MsgManualOpenErrorFormat = "操作マニュアルを開けませんでした: {0}";
     public const string MsgPatientNotInCsv = "患者情報（pat.csv）にない患者IDのため保存できません";
-    public const string MsgCsvImported = "CSVファイルからデータがインポートされました";
+    public const string MsgCsvImported = "CSVファイルからデータをインポートしました";
     public const string MsgCsvImportInvalidFile = "このファイルはインポートできません（ファイル名が patient_info_ で始まるCSVを選択してください）";
     public const string MsgPatientCsvLoadErrorFormat = "患者情報（pat.csv）を読み込めませんでした: {0}";
     public const string MsgCsvImportErrorFormat = "インポート中にエラーが発生しました: {0}";
-    public const string MsgCsvExportedFormat = "データがCSVファイル '{0}' にエクスポートされました";
+    public const string MsgCsvExportedFormat = "'{0}'にエクスポートしました";
     public const string MsgCsvExportErrorFormat = "エクスポート中にエラーが発生しました: {0}";
     public const string MsgConfigNotFoundFormat = "設定ファイルが見つかりません: {0}";
     public const string MsgInvalidInputFormat = "入力値が不正です: {0}";
