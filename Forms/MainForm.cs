@@ -72,6 +72,7 @@ public class MainForm : Form
     private void BuildUi()
     {
         Text = Constants.AppTitle;
+        Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         ClientSize = new Size(AppConfig.WindowWidth, AppConfig.WindowHeight);
         StartPosition = FormStartPosition.CenterScreen;
         AutoScroll = true;
@@ -297,20 +298,6 @@ public class MainForm : Form
     {
         if (Width < 1000)
             ShowStatus(Constants.MsgWindowTooSmall);
-    }
-
-    private void InitializeComponent()
-    {
-        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-        SuspendLayout();
-        // 
-        // MainForm
-        // 
-        ClientSize = new Size(282, 256);
-        Icon = (Icon)resources.GetObject("$this.Icon");
-        Name = "MainForm";
-        ResumeLayout(false);
-
     }
 
     private void ShowStatus(string message)

@@ -2,6 +2,12 @@
 
 このファイルは [Keep a Changelog](https://keepachangelog.com/ja/1.1.0/) の形式に従い、バージョン番号は [セマンティック バージョニング](https://semver.org/lang/ja/) に準拠する。
 
+## [1.1.25] - 2026-10-15
+
+### 修正
+
+- ホーム画面の左上とタスクバーにアプリのアイコンが表示されず、既定のアイコンになっていた不具合を修正。アイコンを読み込む `InitializeComponent()` がどこからも呼ばれていなかった。exeに埋め込んだアイコン（`LDTPlan.ico`）を `BuildUi()` で設定するようにし、使われていなかった `InitializeComponent()` と `MainForm.resx` を削除した
+
 ## [1.1.24] - 2026-10-15
 
 ### 修正
