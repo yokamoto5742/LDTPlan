@@ -148,7 +148,7 @@ public class MainForm : Form
         // 長さが決まっている発行日・回数は値の幅に固定し、残りを 2:2:2:3 で分ける（シート名が一番長い）
         _historyGrid.Columns["issue_date"]!.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
         _historyGrid.Columns["creation_count"]!.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-        _historyGrid.Columns["creation_count"]!.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+        _historyGrid.Columns["creation_count"]!.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
         _historyGrid.Columns["department"]!.FillWeight = 2;
         _historyGrid.Columns["doctor_name"]!.FillWeight = 2;
         _historyGrid.Columns["main_diagnosis"]!.FillWeight = 2;
