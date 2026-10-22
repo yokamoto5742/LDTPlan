@@ -1,8 +1,9 @@
 """抄録用に計画書エクスポートCSVを集計する。
 
-使い方: python analysis/aggregate_plans.py [CSVパス]
+使い方: python analysis/aggregate_plans.py [CSVパス] [--start YYYY-MM-DD] [--end YYYY-MM-DD]
 既定のCSVは confidential/export.csv（Shift_JIS）。結果は標準出力にMarkdownで出す。
 """
+import argparse
 import csv
 import statistics
 import sys
@@ -40,25 +41,35 @@ def quartiles(values):
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
-    path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_CSV
-    with open(path, encoding="cp932", newline="") as f:
-        rows = list(csv.DictReader(f))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("csv", nargs="?", type=Path, default=DEFAULT_CSV)
+    parser.add_argument("--start", type=date.fromisoformat, default=date.min, help="集計開始日 YYYY-MM-DD")
+    parser.add_argument("--end", type=date.fromisoformat, default=date.max, help="集計終了日 YYYY-MM-DD")
+    args = parser.parse_args()
+    with open(args.csv, encoding="cp932", newline="") as f:
+        all_rows = list(csv.DictReader(f))
 
+    # 前回計画は期間より前のものも比較に使うため、患者ごとの履歴は全期間で作る
     by_patient = defaultdict(list)
-    for r in rows:
+    for r in all_rows:
         r["_date"] = parse_date(r["issue_date"])
         by_patient[r["patient_id"]].append(r)
     for plans in by_patient.values():
         plans.sort(key=lambda r: (r["_date"], int(r["id"])))
 
+    def in_period(r):
+        return args.start <= r["_date"] <= args.end
+
+    rows = [r for r in all_rows if in_period(r)]
     total = len(rows)
     dates = [r["_date"] for r in rows]
+    plans_per_patient = Counter(r["patient_id"] for r in rows)
     print("## 利用規模\n")
     print(f"- 計画書件数: {total:,}")
     print(f"- 期間: {min(dates)} 〜 {max(dates)}")
-    print(f"- 患者数: {len(by_patient):,}")
+    print(f"- 患者数: {len(plans_per_patient):,}")
     print(f"- 医師数: {len({r['doctor_id'] for r in rows})}")
-    print(f"- 患者1人あたり件数: {quartiles([len(p) for p in by_patient.values()])}")
+    print(f"- 患者1人あたり件数: {quartiles(list(plans_per_patient.values()))}")
     print("- 主病名:")
     for name, n in Counter(r["main_diagnosis"] for r in rows).most_common():
         print(f"  - {name}: {pct(n, total)}")
@@ -70,10 +81,9 @@ def main():
     print("\n## 継続作成\n")
     continued = sum(1 for r in rows if int(r["creation_count"]) >= 2)
     print(f"- 作成回数2回以上: {pct(continued, total)}")
-    with_prev = total - len(by_patient)
-    print(f"- データ内に同一患者の前回計画がある件数: {pct(with_prev, total)}")
+    pairs = [(p[i - 1], p[i]) for p in by_patient.values() for i in range(1, len(p)) if in_period(p[i])]
+    print(f"- データ内に同一患者の前回計画がある件数: {pct(len(pairs), total)}")
 
-    pairs = [(p[i - 1], p[i]) for p in by_patient.values() for i in range(1, len(p))]
     changed_counts = []
     field_changes = Counter()
     intervals = []
