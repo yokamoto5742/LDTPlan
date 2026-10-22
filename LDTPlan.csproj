@@ -61,10 +61,6 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="confidential\" />
-  </ItemGroup>
-
   <Target Name="CopyToDeployFolder" AfterTargets="Publish">
     <Copy SourceFiles="$(PublishDir)LDTPlan.exe;$(PublishDir)e_sqlite3.dll;$(PublishDir)config.ini" DestinationFolder="C:\Shinseikai\LDTPlan" />
   </Target>
