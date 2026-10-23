@@ -1,0 +1,34 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{csproj,props,slnx,xml,json,yml}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.cs]
+# 名前空間はファイルスコープで宣言する
+csharp_style_namespace_declarations = file_scoped:warning
+dotnet_diagnostic.IDE0161.severity = warning
+
+# 日本語環境専用のデスクトップアプリのため、書式のカルチャ指定は求めない
+dotnet_diagnostic.CA1305.severity = none
+# 表示メッセージの書式化は回数が少なく、CompositeFormat のキャッシュは不要
+dotnet_diagnostic.CA1863.severity = none
+# ButtonSaveNew などの定数名が予約済みの接尾辞と誤判定される
+dotnet_diagnostic.CA1711.severity = none
+
+# マスタ投入などで、短いプロパティを1行に並べる書き方を許す
+csharp_new_line_before_members_in_object_initializers = false
+
+[LDTPlan.Tests/**.cs]
+# テスト名に config_ini などの下線を使う
+dotnet_diagnostic.CA1707.severity = none

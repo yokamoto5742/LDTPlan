@@ -69,7 +69,7 @@ public static class DataExportService
             "shift_jis", new EncoderReplacementFallback(""), DecoderFallback.ReplacementFallback);
         using var writer = new StreamWriter(filePath, false, encoding);
 
-        writer.WriteLine(string.Join(",", new[] { "id" }.Concat(Columns.Select(c => c.Name))));
+        writer.WriteLine(string.Join(",", Columns.Select(c => c.Name).Prepend("id")));
         foreach (var p in patients)
         {
             var values = new List<string> { p.Id.ToString() };

@@ -1,4 +1,5 @@
 using LDTPlan.Data;
+using LDTPlan.Models;
 using LDTPlan.Utils;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,6 +43,32 @@ public static class PatientService
             return null;
         using var db = new AppDbContext();
         return db.MainDiseases.FirstOrDefault(d => d.Name == mainDiseaseName)?.Id;
+    }
+
+    /// <summary>主病名・シート名に対応するテンプレートを取得（なければ null）</summary>
+    public static PlanTemplate? FindTemplate(string mainDisease, string sheetName)
+    {
+        using var db = new AppDbContext();
+        return db.Templates.FirstOrDefault(t => t.MainDisease == mainDisease && t.SheetName == sheetName);
+    }
+
+    /// <summary>テンプレートを保存（同じ主病名・シート名のテンプレートがあれば上書き）</summary>
+    public static void SaveTemplate(PlanTemplate template)
+    {
+        using var db = new AppDbContext();
+        var existing = db.Templates.FirstOrDefault(
+            t => t.MainDisease == template.MainDisease && t.SheetName == template.SheetName);
+        if (existing == null)
+        {
+            db.Templates.Add(template);
+        }
+        else
+        {
+            // 列を追加しても上書き漏れが起きないよう、全列をまとめて写す
+            template.Id = existing.Id;
+            db.Entry(existing).CurrentValues.SetValues(template);
+        }
+        db.SaveChanges();
     }
 
     /// <summary>患者履歴取得</summary>

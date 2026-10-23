@@ -25,12 +25,19 @@ dotnet run --project LDTPlan.csproj
 dotnet publish LDTPlan.csproj -c Release
 ```
 
-`LDTPlan.Tests/`（xUnit）はサービス層・データ層・`Utils/` のテスト。`TestEnvironment` が一時フォルダを指す `config.ini` と空のDBを用意する。UI層（`Forms/`）のテストはないため、画面の変更は手動で確認する。
+`LDTPlan.Tests/`（xUnit）はサービス層・データ層・`Utils/` のテスト。`TestEnvironment` が一時フォルダを指す `config.ini` と空のDBを用意する。UI層（`Forms/`）は `PlanEditFormTests` で項目とレコードの対応だけを確かめ、画面の動きは `docs/manual-test-checklist.md` で手動確認する。
+
+`[TemplateFact]` のテストは配布先のExcelテンプレート（`TestEnvironment.TemplatePath`）から計画書ファイルを生成する。テンプレートは公開リポジトリに含めないため、ない環境ではスキップされる。
 
 ```bash
 # テスト
 dotnet test LDTPlan.Tests/LDTPlan.Tests.csproj
+
+# 書式の確認（修正するときは --verify-no-changes を外す）
+dotnet format LDTPlan.slnx --verify-no-changes
 ```
+
+静的解析は `Directory.Build.props`（`AnalysisLevel=latest-recommended`、警告をエラー扱い）と `.editorconfig` で設定している。ルールを無効にするときは `.editorconfig` に理由を書く。
 
 ## アーキテクチャ
 
@@ -75,11 +82,11 @@ UI層     Forms/           WinFormsフォーム・イベントハンドラ
 
 1. `Models/PatientInfo.cs` に `[Column("列名")]` 付きプロパティを追加
 2. `EnsureCreated()` は既存DBを変更しないため、既存の `ldtp_app.db` には手動で `ALTER TABLE patient_info ADD COLUMN ...` を適用（新規DBは自動作成される）
-3. フィールドを列挙している次の箇所を更新（漏れてもビルドは通るので注意）
-   - `PlanEditForm`: `LoadRecord` / `ApplyGuidanceFields` / `ApplyTemplate` / `SaveTemplate`
+3. フィールドを列挙している次の箇所を更新（漏れてもビルドは通るが、テストが失敗する）
+   - `LDTPlan.Tests/TestData.FullPatientInfo`（全列に値を入れるテストデータ。最初にここを更新すると、残りの漏れをテストが検出する）
+   - `PlanEditForm`: `LoadRecord` / `ApplyGuidanceFields`（テンプレートの列なら `ApplyTemplateFields` / `ReadTemplateFields` と `TestData.FullPlanTemplate`）
    - `DataExportService.Columns`（CSV入出力の列定義）
    - `TreatmentPlanGenerator.PopulateCommonSheet`（Excelのセル番地）
-   - `LDTPlan.Tests/TestData.FullPatientInfo`（全列に値を入れるテストデータ）
 
 前回計画コピー（`PatientService.CopyLatestPlan`）はレコード全体を複製するので、列を追加しても更新は不要。
 

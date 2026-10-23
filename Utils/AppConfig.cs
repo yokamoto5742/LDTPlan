@@ -48,7 +48,7 @@ public static class AppConfig
             // "sqlite:///ldtp_app.db" 形式のURLからファイルパスを取り出す
             var url = Get("Database", "db_url", "sqlite:///ldtp_app.db");
             const string prefix = "sqlite:///";
-            var path = url.StartsWith(prefix) ? url[prefix.Length..] : url;
+            var path = url.StartsWith(prefix, StringComparison.Ordinal) ? url[prefix.Length..] : url;
             // 相対パスは作業ディレクトリではなくexeのフォルダ基準にする（絶対パスはそのまま使われる）
             return Path.Combine(AppContext.BaseDirectory, path);
         }

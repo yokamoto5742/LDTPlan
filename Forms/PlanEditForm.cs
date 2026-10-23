@@ -227,12 +227,13 @@ public class PlanEditForm : Form
         if (mainDisease == "" || sheetName == "")
             return;
 
-        using var db = new AppDbContext();
-        var template = db.Templates.FirstOrDefault(
-            t => t.MainDisease == mainDisease && t.SheetName == sheetName);
-        if (template == null)
-            return;
+        var template = PatientService.FindTemplate(mainDisease, sheetName);
+        if (template != null)
+            ApplyTemplateFields(template);
+    }
 
+    internal void ApplyTemplateFields(PlanTemplate template)
+    {
         _txtTargetBp.Text = template.TargetBp;
         _txtTargetHba1c.Text = template.TargetHba1c;
         _txtGoal1.Text = template.Goal1;
@@ -428,37 +429,34 @@ public class PlanEditForm : Form
             return;
         }
 
-        using var db = new AppDbContext();
-        var template = db.Templates.FirstOrDefault(
-            t => t.MainDisease == mainDisease && t.SheetName == sheetName);
-        if (template == null)
-        {
-            template = new PlanTemplate { MainDisease = mainDisease, SheetName = sheetName };
-            db.Templates.Add(template);
-        }
-
-        template.TargetBp = _txtTargetBp.Text;
-        template.TargetHba1c = _txtTargetHba1c.Text;
-        template.Goal1 = _txtGoal1.Text;
-        template.Goal2 = _txtGoal2.Text;
-        template.Diet1 = GetComboValue(_cmbDiet1);
-        template.Diet2 = GetComboValue(_cmbDiet2);
-        template.Diet3 = GetComboValue(_cmbDiet3);
-        template.Diet4 = GetComboValue(_cmbDiet4);
-        template.ExercisePrescription = GetComboValue(_cmbExercisePrescription);
-        template.ExerciseTime = GetComboValue(_cmbExerciseTime);
-        template.ExerciseFrequency = GetComboValue(_cmbExerciseFrequency);
-        template.ExerciseIntensity = GetComboValue(_cmbExerciseIntensity);
-        template.DailyActivity = GetComboValue(_cmbDailyActivity);
-        template.Other1 = _txtOther1.Text;
-        template.Other2 = _txtOther2.Text;
-        db.SaveChanges();
-
+        PatientService.SaveTemplate(ReadTemplateFields(mainDisease, sheetName));
         ShowInfo(Constants.MsgTemplateSaved);
     }
 
+    /// <summary>テンプレートに保存する項目をフォーム入力から取得</summary>
+    internal PlanTemplate ReadTemplateFields(string mainDisease, string sheetName) => new()
+    {
+        MainDisease = mainDisease,
+        SheetName = sheetName,
+        TargetBp = _txtTargetBp.Text,
+        TargetHba1c = _txtTargetHba1c.Text,
+        Goal1 = _txtGoal1.Text,
+        Goal2 = _txtGoal2.Text,
+        Diet1 = GetComboValue(_cmbDiet1),
+        Diet2 = GetComboValue(_cmbDiet2),
+        Diet3 = GetComboValue(_cmbDiet3),
+        Diet4 = GetComboValue(_cmbDiet4),
+        ExercisePrescription = GetComboValue(_cmbExercisePrescription),
+        ExerciseTime = GetComboValue(_cmbExerciseTime),
+        ExerciseFrequency = GetComboValue(_cmbExerciseFrequency),
+        ExerciseIntensity = GetComboValue(_cmbExerciseIntensity),
+        DailyActivity = GetComboValue(_cmbDailyActivity),
+        Other1 = _txtOther1.Text,
+        Other2 = _txtOther2.Text,
+    };
+
     /// <summary>メイン画面で表示中の患者の基本情報を反映（新規登録・編集保存で使用）</summary>
-    private void ApplyBasicInfo(PatientInfo patientInfo)
+    internal void ApplyBasicInfo(PatientInfo patientInfo)
     {
         var csv = _patient ?? throw new InvalidOperationException(Constants.MsgPatientNotInCsv);
 
@@ -474,7 +472,7 @@ public class PlanEditForm : Form
     }
 
     /// <summary>フォーム入力を反映（発行日時点の年齢は生年月日から計算するため、基本情報の後に呼ぶ）</summary>
-    private void ApplyGuidanceFields(PatientInfo patientInfo)
+    internal void ApplyGuidanceFields(PatientInfo patientInfo)
     {
         patientInfo.MainDiagnosis = GetComboValue(_cmbMainDiagnosis);
         patientInfo.SheetName = GetComboValue(_cmbSheetName);

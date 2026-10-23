@@ -110,4 +110,40 @@ public sealed class PatientServiceTests : IDisposable
     {
         Assert.Empty(PatientService.FetchPatientHistory(null));
     }
+
+    [Fact]
+    public void 同じ主病名とシート名のテンプレートは全列を上書きする()
+    {
+        var template = TestData.FullPlanTemplate();
+        template.Id = 0;
+
+        PatientService.SaveTemplate(template);
+
+        using var db = new AppDbContext();
+        Assert.Equal(9, db.Templates.Count());
+        var saved = PatientService.FindTemplate(template.MainDisease!, template.SheetName!);
+        Assert.NotNull(saved);
+        foreach (var property in typeof(PlanTemplate).GetProperties().Where(p => p.Name != nameof(PlanTemplate.Id)))
+            Assert.Equal(property.GetValue(template), property.GetValue(saved));
+    }
+
+    [Fact]
+    public void 新しい主病名とシート名のテンプレートは追加する()
+    {
+        var template = TestData.FullPlanTemplate();
+        template.Id = 0;
+        template.SheetName = "新しいシート";
+
+        PatientService.SaveTemplate(template);
+
+        using var db = new AppDbContext();
+        Assert.Equal(10, db.Templates.Count());
+        Assert.Equal("達成目標", PatientService.FindTemplate("高血圧症", "新しいシート")?.Goal1);
+    }
+
+    [Fact]
+    public void 該当するテンプレートがなければnullを返す()
+    {
+        Assert.Null(PatientService.FindTemplate("高血圧症", "存在しないシート"));
+    }
 }

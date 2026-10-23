@@ -14,6 +14,9 @@ public sealed class TestEnvironment : IDisposable
     // Shift_JIS を使用可能にする（アプリ本体は Program.Main で登録している）
     static TestEnvironment() => Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
+    // 公開リポジトリに含めない配布先のExcelテンプレート（読み込むだけで書き換えない）
+    public const string TemplatePath = @"C:\Shinseikai\LDTPlan\LDTPform.xlsm";
+
     public string Root { get; } = Path.Combine(Path.GetTempPath(), "LDTPlanTests_" + Guid.NewGuid().ToString("N"));
     public string DbPath => Path.Combine(Root, "test.db");
     public string PatientCsvPath => Path.Combine(Root, "pat.csv");
@@ -35,6 +38,7 @@ public sealed class TestEnvironment : IDisposable
             {databaseSection}
 
             [Paths]
+            template_path = {TemplatePath}
             output_path = {OutputFolder}
 
             [FilePaths]
