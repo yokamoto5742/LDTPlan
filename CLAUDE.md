@@ -8,8 +8,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **エントリーポイント**: `Program.cs` → `Application.Run(new MainForm())`
 
-`src/` はPython/Flet版（旧実装）の参照用コピー。機能追加・修正はすべてC#側に行う。
-
 主要パッケージ: EF Core Sqlite（ORM）・ClosedXML（xlsm読み書き、VBAマクロ保持）・ZXing.Net（Code128バーコード生成）
 
 ## コマンド

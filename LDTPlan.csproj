@@ -27,9 +27,6 @@
 
   <ItemGroup>
     <None Include=".claude\agents\changelog-updater.md" />
-    <None Include=".claude\agents\japanese-comment-reviewer.md" />
-    <None Include=".claude\agents\pyright-type-checker.md" />
-    <None Include=".claude\agents\pytest-test-creator.md" />
     <None Include=".claude\agents\readme-generator.md" />
     <None Include=".claude\hooks\permission-request-notification.ps1" />
     <None Include=".claude\hooks\stop-notification.ps1" />
