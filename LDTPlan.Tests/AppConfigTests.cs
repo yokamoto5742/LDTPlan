@@ -51,6 +51,7 @@ public sealed class AppConfigTests : IDisposable
             startup_log = false
 
             [UI]
+            font_size = 18
             heading_font_size = 20
 
             [Barcode]
@@ -63,6 +64,7 @@ public sealed class AppConfigTests : IDisposable
         Assert.Equal(1300, AppConfig.WindowWidth);
         Assert.Equal(900, AppConfig.WindowHeight);
         Assert.False(AppConfig.StartupLogEnabled);
+        Assert.Equal(13.5f, AppConfig.FontSize); // 18px = 13.5pt
         Assert.Equal(15f, AppConfig.HeadingFontSize); // 20px = 15pt
         Assert.Equal(2, AppConfig.BarcodeQuietZone);
         Assert.Equal(300, AppConfig.BarcodeImageWidth);
@@ -78,6 +80,7 @@ public sealed class AppConfigTests : IDisposable
         Assert.Equal(1200, AppConfig.WindowWidth);
         Assert.Equal(900, AppConfig.WindowHeight);
         Assert.True(AppConfig.StartupLogEnabled);
+        Assert.Equal(12f, AppConfig.FontSize);
         Assert.Equal(12f, AppConfig.HeadingFontSize);
         Assert.Equal(1, AppConfig.BarcodeQuietZone);
         Assert.Equal(200, AppConfig.BarcodeImageWidth);
@@ -94,8 +97,9 @@ public sealed class AppConfigTests : IDisposable
         File.Copy(repositoryConfig, AppConfig.ConfigPath, overwrite: true);
         AppConfig.Load();
 
-        Assert.Equal(1050, AppConfig.WindowWidth);
-        Assert.Equal(12f, AppConfig.HeadingFontSize);
+        Assert.Equal(1300, AppConfig.WindowWidth);
+        Assert.Equal(12f, AppConfig.FontSize);
+        Assert.Equal(15f, AppConfig.HeadingFontSize);
         Assert.Equal(200, AppConfig.BarcodeImageWidth);
         Assert.Equal("B2", AppConfig.BarcodeImagePosition);
         Assert.Equal("39221", AppConfig.DocumentNumber);

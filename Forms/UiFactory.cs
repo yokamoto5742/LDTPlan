@@ -1,8 +1,16 @@
+using LDTPlan.Utils;
+
 namespace LDTPlan.Forms;
 
 /// <summary>フォーム共通のコントロール生成ヘルパー</summary>
 internal static class UiFactory
 {
+    /// <summary>9pt の文字に合わせて決めた寸法を、設定したフォントサイズに比例して拡大する</summary>
+    public static int ScaleToFont(int size) => (int)Math.Round(size * Control.DefaultFont.Size / 9f);
+
+    /// <summary>見出しのフォントサイズ（本文と同じく Windows の文字サイズ設定の倍率を掛ける）</summary>
+    public static float HeadingFontSize => AppConfig.HeadingFontSize * Control.DefaultFont.Size / AppConfig.FontSize;
+
     public static Label CreateLabel(string text) => new()
     {
         Text = text,
@@ -14,7 +22,7 @@ internal static class UiFactory
     // 行内のコントロールは Anchor = Left と上下対称の余白で、行の高さの中央にそろえる
     public static TextBox CreateTextBox(int width, bool readOnly = false) => new()
     {
-        Width = width,
+        Width = ScaleToFont(width),
         ReadOnly = readOnly,
         Anchor = AnchorStyles.Left,
         Margin = new Padding(3, 4, 3, 4),

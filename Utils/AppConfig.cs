@@ -67,6 +67,9 @@ public static class AppConfig
     public static int WindowWidth => GetInt("settings", "window_width", 1200);
     public static int WindowHeight => GetInt("settings", "window_height", 900);
 
+    /// <summary>画面の文字のフォントサイズ（config.ini のピクセル値をポイントに換算して返す）</summary>
+    public static float FontSize => GetInt("UI", "font_size", 16) * 0.75f;
+
     /// <summary>見出しのフォントサイズ（config.ini のピクセル値をポイントに換算して返す）</summary>
     public static float HeadingFontSize => GetInt("UI", "heading_font_size", 16) * 0.75f;
 

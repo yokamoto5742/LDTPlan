@@ -29,13 +29,13 @@ public class PlanEditForm : Form
     {
         Format = DateTimePickerFormat.Custom,
         CustomFormat = "yyyy/MM/dd",
-        Width = 130,
+        Width = ScaleToFont(130),
         Anchor = AnchorStyles.Left,
         Margin = new Padding(3, 4, 3, 4),
     };
 
-    private readonly TextBox _txtGoal1 = CreateTextBox(700);
-    private readonly TextBox _txtGoal2 = CreateTextBox(700);
+    private readonly TextBox _txtGoal1 = CreateTextBox(550);
+    private readonly TextBox _txtGoal2 = CreateTextBox(550);
     private readonly ComboBox _cmbTargetAchievement = CreateCombo(Constants.TargetAchievementItems);
     private readonly TextBox _txtTargetWeight = CreateTextBox(80);
     private readonly TextBox _txtTargetBp = CreateTextBox(100);
@@ -44,13 +44,13 @@ public class PlanEditForm : Form
     private readonly ComboBox _cmbDiet2 = CreateCombo(Constants.DietItems);
     private readonly ComboBox _cmbDiet3 = CreateCombo(Constants.DietItems);
     private readonly ComboBox _cmbDiet4 = CreateCombo(Constants.DietItems);
-    private readonly TextBox _txtDietComment = CreateTextBox(700);
+    private readonly TextBox _txtDietComment = CreateTextBox(550);
     private readonly ComboBox _cmbExercisePrescription = CreateCombo(Constants.ExercisePrescriptionItems);
     private readonly ComboBox _cmbExerciseTime = CreateCombo(Constants.ExerciseTimeItems);
     private readonly ComboBox _cmbExerciseFrequency = CreateCombo(Constants.ExerciseFrequencyItems);
     private readonly ComboBox _cmbExerciseIntensity = CreateCombo(Constants.ExerciseIntensityItems);
     private readonly ComboBox _cmbDailyActivity = CreateCombo(Constants.DailyActivityItems);
-    private readonly TextBox _txtExerciseComment = CreateTextBox(700);
+    private readonly TextBox _txtExerciseComment = CreateTextBox(550);
     private readonly CheckBox _chkNonsmoker = CreateCheckBox(Constants.LabelNonsmoker);
     private readonly CheckBox _chkSmokingCessation = CreateCheckBox(Constants.LabelSmokingCessation);
     private readonly TextBox _txtOther1 = CreateTextBox(300);
@@ -91,7 +91,7 @@ public class PlanEditForm : Form
         AutoScroll = true;
         MinimizeBox = false;
 
-        var headingFont = new Font(Font.FontFamily, AppConfig.HeadingFontSize, FontStyle.Bold);
+        var headingFont = new Font(Font.FontFamily, HeadingFontSize, FontStyle.Bold);
         var titleLabel = new Label
         {
             Text = ModeTitle(),
@@ -106,14 +106,6 @@ public class PlanEditForm : Form
             titleLabel,
             CreateLabel(Constants.LabelMainDiagnosis), _cmbMainDiagnosis,
             CreateLabel(Constants.LabelSheetName), _cmbSheetName);
-        if (_mode != PlanFormMode.Template)
-        {
-            headerRow.Controls.Add(CreateLabel(Constants.LabelCreationCount));
-            headerRow.Controls.Add(_txtCreationCount);
-            headerRow.Controls.Add(CreateLabel(Constants.LabelCreationCountSuffix));
-            headerRow.Controls.Add(CreateLabel(Constants.LabelIssueDate));
-            headerRow.Controls.Add(_dtpIssueDate);
-        }
 
         var layout = new FlowLayoutPanel
         {
@@ -124,10 +116,17 @@ public class PlanEditForm : Form
             Padding = new Padding(10),
         };
         layout.Controls.Add(headerRow);
+        if (_mode != PlanFormMode.Template)
+        {
+            layout.Controls.Add(CreateRow(
+                CreateLabel(Constants.LabelCreationCount), _txtCreationCount,
+                CreateLabel(Constants.LabelCreationCountSuffix),
+                CreateLabel(Constants.LabelIssueDate), _dtpIssueDate));
+        }
         layout.Controls.Add(CreateRow(CreateLabel(Constants.LabelGoal1), _txtGoal1));
         layout.Controls.Add(CreateRow(CreateLabel(Constants.LabelGoal2), _txtGoal2));
+        layout.Controls.Add(CreateRow(CreateLabel(Constants.LabelTargetAchievement), _cmbTargetAchievement));
         layout.Controls.Add(CreateRow(
-            CreateLabel(Constants.LabelTargetAchievement), _cmbTargetAchievement,
             CreateLabel(Constants.LabelTargetWeight), _txtTargetWeight, CreateLabel("kg"),
             CreateLabel(Constants.LabelTargetBp), _txtTargetBp, CreateLabel("mmHg"),
             CreateLabel(Constants.LabelTargetHba1c), _txtTargetHba1c, CreateLabel("%")));
@@ -141,7 +140,8 @@ public class PlanEditForm : Form
         layout.Controls.Add(CreateRow(
             CreateLabel(Constants.LabelExercisePrescription), _cmbExercisePrescription,
             CreateLabel(Constants.LabelExerciseTime), _cmbExerciseTime,
-            CreateLabel(Constants.LabelExerciseFrequency), _cmbExerciseFrequency,
+            CreateLabel(Constants.LabelExerciseFrequency), _cmbExerciseFrequency));
+        layout.Controls.Add(CreateRow(
             CreateLabel(Constants.LabelExerciseIntensity), _cmbExerciseIntensity,
             CreateLabel(Constants.LabelDailyActivity), _cmbDailyActivity));
         layout.Controls.Add(CreateRow(CreateLabel(Constants.LabelExerciseComment), _txtExerciseComment));
@@ -155,8 +155,8 @@ public class PlanEditForm : Form
         layout.Controls.Add(BuildButtonRow());
 
         Controls.Add(layout);
-        // 開いたときにメイン画面がちょうど隠れるよう、高さはメイン画面と同じ window_height にする
-        ClientSize = new Size(1250, AppConfig.WindowHeight);
+        // 開いたときにメイン画面がちょうど隠れるよう、メイン画面と同じ大きさにする
+        ClientSize = new Size(AppConfig.WindowWidth, AppConfig.WindowHeight);
     }
 
     private string ModeTitle() => _mode switch

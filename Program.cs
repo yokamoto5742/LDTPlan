@@ -39,6 +39,10 @@ internal static class Program
         AppConfig.Load();
         StartupLog.Mark("設定読込完了");
 
+        // 全画面の文字の大きさを config.ini の font_size にそろえる（最初の画面を作る前に呼ぶ必要がある）。
+        // 先に Control.DefaultFont を参照すると既定フォントが確定して設定が効かなくなるため、元のフォントから書体を取る
+        Application.SetDefaultFont(new Font(SystemFonts.MessageBoxFont!.FontFamily, AppConfig.FontSize));
+
         // メイン画面はDB初期化とデータ読込の後に表示するので、それまでの間は起動中であることを示す
         var splash = new SplashForm();
         splash.Show();

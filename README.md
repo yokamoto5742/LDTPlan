@@ -90,8 +90,13 @@ exeと同じディレクトリの `config.ini` で全パス・サイズ設定を
 db_url = sqlite:///ldtp_app.db
 
 [settings]
-window_width = 1050
-window_height = 600
+window_width = 1300
+window_height = 900
+
+[UI]
+; 画面の文字・見出しの大きさ(px)。入力欄の幅も文字の大きさに合わせて変わる
+font_size = 16
+heading_font_size = 20
 
 [Paths]
 ; template_path: 計画書テンプレート(xlsm) / output_path: 生成文書の出力先

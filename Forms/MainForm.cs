@@ -10,11 +10,11 @@ namespace LDTPlan.Forms;
 
 public class MainForm : Form
 {
-    private readonly TextBox _txtPatientId = CreateTextBox(100);
-    private readonly TextBox _txtName = CreateTextBox(150, readOnly: true);
-    private readonly TextBox _txtKana = CreateTextBox(150, readOnly: true);
-    private readonly TextBox _txtGender = CreateTextBox(80, readOnly: true);
-    private readonly TextBox _txtBirthdate = CreateTextBox(120, readOnly: true);
+    private readonly TextBox _txtPatientId = CreateTextBox(80);
+    private readonly TextBox _txtName = CreateTextBox(120, readOnly: true);
+    private readonly TextBox _txtKana = CreateTextBox(130, readOnly: true);
+    private readonly TextBox _txtGender = CreateTextBox(50, readOnly: true);
+    private readonly TextBox _txtBirthdate = CreateTextBox(100, readOnly: true);
     private readonly TextBox _txtDoctorId = CreateTextBox(80, readOnly: true);
     private readonly TextBox _txtDoctorName = CreateTextBox(150, readOnly: true);
     private readonly TextBox _txtDepartment = CreateTextBox(150, readOnly: true);
@@ -93,7 +93,7 @@ public class MainForm : Form
         var rowWidth = Math.Max(patientRow.PreferredSize.Width, doctorRow.PreferredSize.Width);
         ConfigureHistoryGrid(rowWidth - _historyGrid.Margin.Horizontal);
 
-        var headingFont = new Font(Font.FontFamily, AppConfig.HeadingFontSize);
+        var headingFont = new Font(Font.FontFamily, HeadingFontSize);
         var historyHeading = CreateLabel(Constants.HistoryHeading);
         historyHeading.Font = headingFont;
 
@@ -128,7 +128,7 @@ public class MainForm : Form
     private void ConfigureHistoryGrid(int tableWidth)
     {
         _historyGrid.Width = tableWidth;
-        _historyGrid.Height = 400;
+        _historyGrid.Height = ScaleToFont(400);
         _historyGrid.ReadOnly = true;
         _historyGrid.AllowUserToAddRows = false;
         _historyGrid.AllowUserToDeleteRows = false;
