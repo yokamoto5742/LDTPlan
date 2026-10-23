@@ -164,7 +164,7 @@ public class MainForm : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, string.Format(Constants.MsgPatientCsvLoadErrorFormat, ex.Message),
+            MessageDialog.Show(this, string.Format(Constants.MsgPatientCsvLoadErrorFormat, ex.Message),
                 Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
         StartupLog.Mark("患者CSV読込完了");

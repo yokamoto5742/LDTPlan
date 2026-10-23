@@ -396,7 +396,7 @@ public class PlanEditForm : Form
 
     private void DeleteData()
     {
-        var answer = MessageBox.Show(this, Constants.MsgConfirmDelete, Text,
+        var answer = MessageDialog.Show(this, Constants.MsgConfirmDelete, Text,
             MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
         if (answer != DialogResult.Yes)
             return;
@@ -522,8 +522,8 @@ public class PlanEditForm : Form
             : throw new InvalidOperationException(string.Format(Constants.MsgInvalidInputFormat, fieldLabel));
 
     private void ShowInfo(string message)
-        => MessageBox.Show(this, message, Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        => MessageDialog.Show(this, message, Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
     private void ShowError(string message)
-        => MessageBox.Show(this, message, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        => MessageDialog.Show(this, message, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 }

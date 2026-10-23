@@ -56,11 +56,11 @@ public class SettingsDialog : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, string.Format(Constants.MsgCsvExportErrorFormat, ex.Message), Text);
+            MessageDialog.Show(this, string.Format(Constants.MsgCsvExportErrorFormat, ex.Message), Text);
             return;
         }
 
-        MessageBox.Show(this, string.Format(Constants.MsgCsvExportedFormat, fileName), Text);
+        MessageDialog.Show(this, string.Format(Constants.MsgCsvExportedFormat, fileName), Text);
         Process.Start(new ProcessStartInfo(AppConfig.ExportFolder) { UseShellExecute = true });
         Close();
     }
@@ -77,11 +77,11 @@ public class SettingsDialog : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, string.Format(Constants.MsgCsvImportErrorFormat, ex.Message), Text);
+            MessageDialog.Show(this, string.Format(Constants.MsgCsvImportErrorFormat, ex.Message), Text);
             return;
         }
 
-        MessageBox.Show(this, Constants.MsgCsvImported, Text);
+        MessageDialog.Show(this, Constants.MsgCsvImported, Text);
         _onDataImported();
     }
 }

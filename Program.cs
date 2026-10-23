@@ -30,7 +30,7 @@ internal static class Program
 
         if (!File.Exists(AppConfig.ConfigPath))
         {
-            MessageBox.Show(
+            MessageDialog.Show(null,
                 string.Format(Constants.MsgConfigNotFoundFormat, AppConfig.ConfigPath),
                 Constants.AppTitle, MessageBoxButtons.OK, MessageBoxIcon.Error);
             return;
