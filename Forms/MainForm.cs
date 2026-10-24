@@ -19,8 +19,6 @@ public class MainForm : Form
     private readonly TextBox _txtDoctorName = CreateTextBox(150, readOnly: true);
     private readonly TextBox _txtDepartment = CreateTextBox(150, readOnly: true);
     private readonly DataGridView _historyGrid = new();
-    private readonly ToolStripStatusLabel _statusLabel = new();
-    private readonly System.Windows.Forms.Timer _statusTimer = new() { Interval = 3000 };
 
     private List<PatientCsvRecord> _csvPatients = [];
     // 入力中の患者ID（数値でなければ null）と、それに対応する pat.csv の患者（なければ null）
@@ -59,13 +57,7 @@ public class MainForm : Form
                 }
             });
         };
-        Resize += (_, _) => WarnIfWindowTooSmall();
         FormClosed += (_, _) => _fileMonitor?.Dispose();
-        _statusTimer.Tick += (_, _) =>
-        {
-            _statusLabel.Text = "";
-            _statusTimer.Stop();
-        };
     }
 
     private void BuildUi()
@@ -116,11 +108,7 @@ public class MainForm : Form
         layout.Controls.Add(CreateRow(historyHeading, CreateLabel(Constants.HistoryHint)));
         layout.Controls.Add(_historyGrid);
 
-        var statusStrip = new StatusStrip();
-        statusStrip.Items.Add(_statusLabel);
-
         Controls.Add(layout);
-        Controls.Add(statusStrip);
 
         _txtPatientId.TextChanged += OnPatientIdChanged;
     }
@@ -262,7 +250,6 @@ public class MainForm : Form
         if (_currentPatient == null || !PatientService.CopyLatestPlan(_currentPatient, DateTime.Today))
             return;
 
-        ShowStatus(Constants.MsgDataCopied);
         RefreshHistory();
     }
 
@@ -277,7 +264,7 @@ public class MainForm : Form
         var path = AppConfig.ManualPdfPath;
         if (string.IsNullOrEmpty(path) || !File.Exists(path))
         {
-            ShowStatus(Constants.MsgManualPathError);
+            MessageDialog.Show(this, Constants.MsgManualPathError, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
@@ -287,20 +274,8 @@ public class MainForm : Form
         }
         catch (Exception ex)
         {
-            ShowStatus(string.Format(Constants.MsgManualOpenErrorFormat, ex.Message));
+            MessageDialog.Show(this, string.Format(Constants.MsgManualOpenErrorFormat, ex.Message),
+                Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
-    }
-
-    private void WarnIfWindowTooSmall()
-    {
-        if (Width < 1000)
-            ShowStatus(Constants.MsgWindowTooSmall);
-    }
-
-    private void ShowStatus(string message)
-    {
-        _statusLabel.Text = message;
-        _statusTimer.Stop();
-        _statusTimer.Start();
     }
 }

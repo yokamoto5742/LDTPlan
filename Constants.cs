@@ -3,7 +3,7 @@ namespace LDTPlan;
 /// <summary>UI表示文字列とドロップダウン選択肢の定数</summary>
 public static class Constants
 {
-    public const string AppVersion = "1.1.33";
+    public const string AppVersion = "1.1.34";
     public const string AppLastUpdated = "2026-10-23";
 
     // ウィンドウ・見出し
@@ -84,12 +84,10 @@ public static class Constants
     public const string ColumnCreationCount = "回数";
 
     // メッセージ
-    public const string MsgWindowTooSmall = "ウィンドウサイズが小さすぎます。幅を1000ピクセル以上にしてください。";
     public const string MsgSelectMainDiagnosis = "主病名を選択してください";
     public const string MsgSelectSheetName = "シート名を選択してください";
     public const string MsgSelectMainDiagnosisAndSheet = "主病名とシート名を選択してください";
     public const string MsgDataSaved = "保存しました";
-    public const string MsgDataCopied = "コピーしました";
     public const string MsgSavedButPlanFailedFormat =
         "データを保存しましたが、計画書を作成できませんでした。編集画面の「印刷」から作成してください。\n{0}";
     public const string MsgTemplateSaved = "テンプレートを保存しました";
