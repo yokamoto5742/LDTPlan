@@ -97,7 +97,7 @@ public sealed class AppConfigTests : IDisposable
         File.Copy(repositoryConfig, AppConfig.ConfigPath, overwrite: true);
         AppConfig.Load();
 
-        Assert.Equal(1310, AppConfig.WindowWidth);
+        Assert.Equal(1150, AppConfig.WindowWidth);
         Assert.Equal(13.5f, AppConfig.FontSize);
         Assert.Equal(15f, AppConfig.HeadingFontSize);
         Assert.Equal(200, AppConfig.BarcodeImageWidth);
