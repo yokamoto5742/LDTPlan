@@ -40,8 +40,9 @@ internal static class Program
         StartupLog.Mark("設定読込完了");
 
         // 全画面の文字の大きさを config.ini の font_size にそろえる（最初の画面を作る前に呼ぶ必要がある）。
-        // 先に Control.DefaultFont を参照すると既定フォントが確定して設定が効かなくなるため、元のフォントから書体を取る
-        Application.SetDefaultFont(new Font(SystemFonts.MessageBoxFont!.FontFamily, AppConfig.FontSize));
+        // 先に Control.DefaultFont を参照すると既定フォントが確定して設定が効かなくなるため、元のフォントから書体を取る。
+        // WinForms は「テキストのサイズ」の倍率で既定フォントを拡大し、ピクセル固定の画面から文字がはみ出すため、倍率で割って打ち消す
+        Application.SetDefaultFont(new Font(SystemFonts.MessageBoxFont!.FontFamily, AppConfig.FontSize / SystemTextScale.Factor));
 
         // メイン画面はDB初期化とデータ読込の後に表示するので、それまでの間は起動中であることを示す
         var splash = new SplashForm();
