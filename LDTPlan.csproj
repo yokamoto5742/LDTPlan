@@ -34,6 +34,7 @@
     <None Include=".claude\rules\commit.md" />
     <None Include=".claude\rules\encoding.md" />
     <None Include=".claude\rules\response-style.md" />
+    <None Include=".claude\rules\winforms-scaling.md" />
   </ItemGroup>
 
   <ItemGroup>
