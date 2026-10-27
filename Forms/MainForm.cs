@@ -39,6 +39,10 @@ public class MainForm : Form
         };
         Shown += (_, _) =>
         {
+            // 初回起動は時間がかかり、その間に電子カルテを操作すると後ろに表示されるため、最前面に出す
+            ActiveControl = _txtPatientId;
+            StartupLog.Mark(WindowActivator.BringToFront(Handle) ? "前面化成功" : "前面化失敗");
+
             // 読込中に打たれたキーは溜まっていて表示後に患者ID欄へ届き、文字が重複するため捨てる
             DiscardPendingKeyInput();
             StartupLog.Mark("画面表示");

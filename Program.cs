@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text;
 using LDTPlan.Data;
 using LDTPlan.Forms;
@@ -75,17 +74,6 @@ internal static class Program
         Application.Run(mainForm);
     }
 
-    private const int SwRestore = 9;
-
-    [DllImport("user32.dll")]
-    private static extern bool SetForegroundWindow(IntPtr hWnd);
-
-    [DllImport("user32.dll")]
-    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-    [DllImport("user32.dll")]
-    private static extern bool IsIconic(IntPtr hWnd);
-
     /// <summary>起動済みのアプリの画面を前面に出す（最小化されていれば元に戻す）</summary>
     private static void ActivateRunningInstance()
     {
@@ -97,9 +85,7 @@ internal static class Program
                 if (process.Id == current.Id || process.MainWindowHandle == IntPtr.Zero)
                     continue;
 
-                if (IsIconic(process.MainWindowHandle))
-                    ShowWindow(process.MainWindowHandle, SwRestore);
-                SetForegroundWindow(process.MainWindowHandle);
+                WindowActivator.BringToFront(process.MainWindowHandle);
                 return;
             }
         }

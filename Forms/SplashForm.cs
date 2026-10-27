@@ -8,6 +8,8 @@ public class SplashForm : Form
         FormBorderStyle = FormBorderStyle.None;
         StartPosition = FormStartPosition.CenterScreen;
         ShowInTaskbar = false;
+        // 起動に時間がかかる間に他のアプリを操作しても、起動中であることが隠れないようにする
+        TopMost = true;
         ClientSize = new Size(240, 80);
         Controls.Add(new Label
         {

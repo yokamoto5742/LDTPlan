@@ -3,7 +3,7 @@ namespace LDTPlan;
 /// <summary>UI表示文字列とドロップダウン選択肢の定数</summary>
 public static class Constants
 {
-    public const string AppVersion = "1.1.35";
+    public const string AppVersion = "1.1.36";
     public const string AppLastUpdated = "2026-10-23";
 
     // ウィンドウ・見出し
