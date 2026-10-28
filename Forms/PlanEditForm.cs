@@ -520,7 +520,8 @@ public class PlanEditForm : Form
             : throw new InvalidOperationException(string.Format(Constants.MsgInvalidInputFormat, fieldLabel));
 
     private void ShowInfo(string message)
-        => MessageDialog.Show(this, message, Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        => MessageDialog.Show(this, message, Text, MessageBoxButtons.OK, MessageBoxIcon.Information,
+            autoCloseMilliseconds: Constants.InfoAutoCloseMilliseconds);
 
     private void ShowError(string message)
         => MessageDialog.Show(this, message, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);

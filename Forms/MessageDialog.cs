@@ -10,7 +10,8 @@ internal static class MessageDialog
         IWin32Window? owner, string text, string caption,
         MessageBoxButtons buttons = MessageBoxButtons.OK,
         MessageBoxIcon icon = MessageBoxIcon.None,
-        MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1)
+        MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1,
+        int autoCloseMilliseconds = 0)
     {
         using var form = new Form
         {
@@ -63,7 +64,9 @@ internal static class MessageDialog
         layout.Controls.Add(buttonPanel, 0, 1);
         layout.SetColumnSpan(buttonPanel, 2);
 
-        var defs = ButtonDefinitions(buttons);
+        // 自動で閉じるときはボタンを置かず、指定時間で閉じる
+        var autoClose = autoCloseMilliseconds > 0;
+        var defs = autoClose ? [] : ButtonDefinitions(buttons);
         var defaultIndex = Math.Min((int)defaultButton / 256, defs.Count - 1);
         var created = new List<Button>();
         // 右から並べるため、定義の末尾から追加する
@@ -84,10 +87,15 @@ internal static class MessageDialog
         }
 
         // Esc と × ボタンは最後のボタン（OK または いいえ）の扱いにする
-        form.CancelButton = created.First();
+        if (created.Count > 0)
+            form.CancelButton = created.First();
 
         form.Controls.Add(layout);
         form.Shown += (_, _) => (form.AcceptButton as Button)?.Focus();
+
+        using var timer = new System.Windows.Forms.Timer { Interval = autoClose ? autoCloseMilliseconds : 1 };
+        timer.Tick += (_, _) => form.Close();
+        form.Shown += (_, _) => timer.Enabled = autoClose;
         return owner == null ? form.ShowDialog() : form.ShowDialog(owner);
     }
 

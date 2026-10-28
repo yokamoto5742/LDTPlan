@@ -3,8 +3,11 @@ namespace LDTPlan;
 /// <summary>UI表示文字列とドロップダウン選択肢の定数</summary>
 public static class Constants
 {
-    public const string AppVersion = "1.1.37";
-    public const string AppLastUpdated = "2026-10-23";
+    public const string AppVersion = "1.1.38";
+    public const string AppLastUpdated = "2026-10-28";
+
+    /// <summary>OKボタンのない通知を自動で閉じるまでの時間</summary>
+    public const int InfoAutoCloseMilliseconds = 2000;
 
     // ウィンドウ・見出し
     public const string AppTitle = "生活習慣病療養計画書アプリ";
