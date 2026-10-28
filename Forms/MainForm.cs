@@ -61,6 +61,8 @@ public class MainForm : Form
                 }
             });
         };
+        FormClosing += (_, _) => WindowPositionStore.Save(WindowPositionStore.DefaultPath,
+            WindowState == FormWindowState.Normal ? Location : RestoreBounds.Location);
         FormClosed += (_, _) => _fileMonitor?.Dispose();
     }
 
@@ -70,6 +72,13 @@ public class MainForm : Form
         Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         ClientSize = new Size(AppConfig.WindowWidth, AppConfig.WindowHeight);
         StartPosition = FormStartPosition.CenterScreen;
+        // 前回閉じた位置から開始する（保存がない、または画面外なら中央に表示する）
+        if (WindowPositionStore.Load(WindowPositionStore.DefaultPath) is { } savedLocation
+            && WindowPositionStore.IsVisible(savedLocation, Size))
+        {
+            StartPosition = FormStartPosition.Manual;
+            Location = savedLocation;
+        }
         AutoScroll = true;
 
         var patientRow = CreateRow(
