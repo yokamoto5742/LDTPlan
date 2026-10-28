@@ -90,6 +90,9 @@ internal static class MessageDialog
         if (created.Count > 0)
             form.CancelButton = created.First();
 
+        // ボタンがないときは余白も出さない
+        buttonPanel.Visible = created.Count > 0;
+
         form.Controls.Add(layout);
         form.Shown += (_, _) => (form.AcceptButton as Button)?.Focus();
 
