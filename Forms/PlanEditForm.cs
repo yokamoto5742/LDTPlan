@@ -377,6 +377,9 @@ public class PlanEditForm : Form
     /// <summary>編集中の計画書を保存して印刷</summary>
     private void PrintPlan()
     {
+        if (!CheckRequiredFields())
+            return;
+
         try
         {
             using var db = new AppDbContext();
@@ -384,6 +387,7 @@ public class PlanEditForm : Form
             if (record == null)
                 return;
 
+            ApplyBasicInfo(record);
             ApplyGuidanceFields(record);
             db.SaveChanges();
 
