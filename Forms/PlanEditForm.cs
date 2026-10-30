@@ -173,8 +173,8 @@ public class PlanEditForm : Form
             CreateButton(Constants.ButtonSaveNew, (_, _) => SaveNewPlan(print: false)),
             CreateButton(Constants.ButtonBack, (_, _) => Close())),
         PlanFormMode.Edit => CreateRow(
+            CreateButton(Constants.ButtonSaveAndPrint, (_, _) => PrintPlan()),
             CreateButton(Constants.ButtonSave, (_, _) => SaveData()),
-            CreateButton(Constants.ButtonPrint, (_, _) => PrintPlan()),
             CreateButton(Constants.ButtonDelete, (_, _) => DeleteData()),
             CreateButton(Constants.ButtonBack, (_, _) => Close())),
         _ => CreateRow(
@@ -392,7 +392,10 @@ public class PlanEditForm : Form
         catch (Exception ex)
         {
             ShowError(ex.Message);
+            return;
         }
+
+        Close();
     }
 
     private void DeleteData()
