@@ -1,5 +1,3 @@
-using LDTPlan.Models;
-
 namespace LDTPlan.Tests;
 
 /// <summary>列を追加したときにテストデータの更新漏れを検出する（null の列があると複写漏れを見逃す）</summary>

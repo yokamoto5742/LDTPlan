@@ -1,7 +1,7 @@
-using System.Text;
 using LDTPlan.Data;
 using LDTPlan.Utils;
 using Microsoft.Data.Sqlite;
+using System.Text;
 
 // AppConfig が静的な設定を保持するため、テストは並列実行しない
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
