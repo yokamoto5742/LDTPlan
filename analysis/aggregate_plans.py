@@ -82,6 +82,10 @@ def main():
     continued = sum(1 for r in rows if int(r["creation_count"]) >= 2)
     print(f"- 作成回数2回以上: {pct(continued, total)}")
     pairs = [(p[i - 1], p[i]) for p in by_patient.values() for i in range(1, len(p)) if in_period(p[i])]
+    # 同じ日の前回計画は作り直しとみなし、継続作成から外す
+    same_day = sum(1 for prev, cur in pairs if prev["_date"] == cur["_date"])
+    pairs = [(prev, cur) for prev, cur in pairs if prev["_date"] != cur["_date"]]
+    print(f"- 同じ日の前回計画がある件数（除外）: {same_day:,}")
     print(f"- データ内に同一患者の前回計画がある件数: {pct(len(pairs), total)}")
 
     changed_counts = []
@@ -101,6 +105,7 @@ def main():
     print(f"- 2項目以下: {pct(sum(v for k, v in dist.items() if k <= 2), n_pairs)}")
     print(f"- 5項目以下: {pct(sum(v for k, v in dist.items() if k <= 5), n_pairs)}")
     print(f"- 前回からの間隔(日): {quartiles(intervals)}")
+    print(f"- 前回から120日以内: {pct(sum(1 for d in intervals if d <= 120), n_pairs)}")
     print("- 項目別の変更率:")
     for field, n in field_changes.most_common():
         print(f"  - {field}: {pct(n, n_pairs)}")
