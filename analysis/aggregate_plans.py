@@ -106,6 +106,11 @@ def main():
     print(f"- 5項目以下: {pct(sum(v for k, v in dist.items() if k <= 5), n_pairs)}")
     print(f"- 前回からの間隔(日): {quartiles(intervals)}")
     print(f"- 前回から120日以内: {pct(sum(1 for d in intervals if d <= 120), n_pairs)}")
+    # 目標達成度は毎回の評価で変わるため、指導内容の変更から外す
+    guidance = [f for f in CONTENT_FIELDS if f != "target_achievement"]
+    pair_patients = {cur["patient_id"] for _, cur in pairs}
+    guidance_changed = {cur["patient_id"] for prev, cur in pairs if any(prev[f] != cur[f] for f in guidance)}
+    print(f"- 指導内容を1項目以上変更した患者（目標達成度を除く）: {pct(len(guidance_changed), len(pair_patients))}")
     print("- 項目別の変更率:")
     for field, n in field_changes.most_common():
         print(f"  - {field}: {pct(n, n_pairs)}")
